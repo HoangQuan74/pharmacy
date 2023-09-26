@@ -1,4 +1,4 @@
-import { DataSource } from "typeorm"
+import { DataSource } from "typeorm";
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -11,7 +11,7 @@ export const AppDataSource = new DataSource({
     username: DB_USERNAME,
     password: DB_PASSWORD,
     database: DB_DATABASE,
-    synchronize: false,
+    synchronize: true,
     logging: false,
     entities: [
         __dirname + '/database/entities/*{.ts,.js}',
