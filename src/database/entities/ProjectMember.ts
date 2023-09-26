@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CodeBase } from "./CodeBase";
-import { Users } from "./users";
+import { Users } from "./Users";
 import { Role } from "./Role";
 import { Projects } from "./Projects";
 import { MemberTask } from "./MemberTask";
@@ -43,8 +43,8 @@ export class ProjectMember extends CodeBase {
     project?: Projects;
 
     @OneToMany(() => MemberTask, (memberTask) => memberTask.projectMember)
-    memberTasks: MemberTask[];
+    memberTasks?: MemberTask[];
 
     @OneToMany(() => Comment, (comment) => comment.projectMember)
-    comment: Comment[];
+    comment?: Comment[];
 }

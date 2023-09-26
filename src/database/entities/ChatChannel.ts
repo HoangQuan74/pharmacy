@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CodeBase } from "./CodeBase";
-import { typeChannel } from "src/common/constants/userConstant";
+import { typeChannel } from "../../common/constants/userConstant";
 import { ChannelMember } from "./ChannelMemner";
 import { ChatMessage } from "./ChatMessage";
 
@@ -12,7 +12,7 @@ export class ChatChannel extends CodeBase {
     @Column({ name: 'name', length: 50 })
     name: string;
 
-    @Column({  default: typeChannel.DIRECT })
+    @Column({ type: 'int', default: typeChannel.DIRECT })
     type: typeChannel
 
     // relation

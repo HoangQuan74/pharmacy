@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CodeBase } from "./CodeBase";
-import { Users } from "./users";
+import { Users } from "./Users";
 import { ChatChannel } from "./ChatChannel";
 
 @Entity({ name: 'channel_member' })

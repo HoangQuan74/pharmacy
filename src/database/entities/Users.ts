@@ -1,6 +1,6 @@
 import { Column, PrimaryGeneratedColumn, Entity, OneToMany } from "typeorm";
 import { CodeBase } from "./CodeBase";
-import { gender } from "src/common/constants/userConstant";
+import { gender } from "../../common/constants/userConstant";
 import { ProjectMember } from "./ProjectMember";
 import { ChannelMember } from "./ChannelMemner";
 import { ChatMessage } from "./ChatMessage";
@@ -25,7 +25,7 @@ export class Users extends CodeBase {
     @Column({ nullable: true })
     age: number;
 
-    @Column({ default: gender.MALE , nullable: true })
+    @Column({ type: 'int', default: gender.MALE , nullable: true })
     gender: gender;
 
     // relation
