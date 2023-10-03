@@ -23,7 +23,7 @@ export class Users extends CodeBase {
     password: string;
 
     @Column({ nullable: true })
-    age: number;
+    dob: Date;
 
     @Column({ type: 'int', default: gender.MALE , nullable: true })
     gender: gender;
