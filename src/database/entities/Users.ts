@@ -23,10 +23,13 @@ export class Users extends CodeBase {
     password: string;
 
     @Column({ nullable: true })
-    age: number;
+    dob: Date;
 
-    @Column({ type: 'int', default: gender.MALE , nullable: true })
+    @Column({ default: gender.MALE , nullable: true })
     gender: gender;
+
+    @Column({ length: 10, nullable: true })
+    phone: string;
 
     // relation
     @OneToMany(() => ProjectMember, (projectMember) => projectMember.user)
