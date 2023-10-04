@@ -12,7 +12,7 @@ export class ChatChannel extends CodeBase {
     @Column({ name: 'name', length: 50 })
     name: string;
 
-    @Column({ type: 'int', default: typeChannel.DIRECT })
+    @Column({ default: typeChannel.DIRECT })
     type: typeChannel
 
     // relation
