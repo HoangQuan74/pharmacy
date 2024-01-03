@@ -1,7 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CodeBase } from "./CodeBase";
 import { Users } from "./Users";
-import { Role } from "./Role";
 import { Projects } from "./Projects";
 import { Comment } from "./Comment";
 

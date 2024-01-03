@@ -12,8 +12,7 @@ export class UserService {
                 user.password = hashPass(user.password);
             if (user?.id) {
                 oldUser = await this.getUserById(user.id);
-                user.firstName = user.firstName ?? oldUser.firstName;
-                user.lastName = user.lastName ?? oldUser.lastName;
+                user.fullName = user.fullName ?? oldUser.firstName;
                 user.email = user.email ?? oldUser.email;
                 user.password = user.password ?? oldUser.password;
                 user.dob = user.dob ?? oldUser.dob;
