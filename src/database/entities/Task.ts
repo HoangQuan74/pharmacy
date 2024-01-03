@@ -1,11 +1,23 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CodeBase } from "./CodeBase";
 import { Projects } from "./Projects";
-import { ListTask } from "./ListTask";
-import { MemberTask } from "./MemberTask";
+import { CheckList } from "./CheckList";
 import { Comment } from "./Comment";
-import { Label } from "./Label";
 
+export enum Priority {
+    HIGH = 'HIGH',
+    MEDIUM = 'MEDIUM',
+    LOW = 'LOW',
+}
+
+export enum TaskStatus {
+    NOT_STARTED = 'NOT_STARTED',
+    DOING = 'DOING',
+    TESTING = 'TESTING',
+    FIXING = 'FIXING',
+    DONE = 'DONE',
+    PENDING = 'PENDING',
+}
 @Entity({ name: 'task' })
 export class Task extends CodeBase {
     @PrimaryGeneratedColumn()
@@ -14,45 +26,22 @@ export class Task extends CodeBase {
     @Column({ length: 50 })
     name: string;
 
-    @Column({ name: 'label_id', nullable: true })
-    labelId: number;
+    @Column({ type: 'enum', enum: Priority, nullable: true })
+    priority: Priority;
 
-    @Column({ name: 'specify', length: 500, nullable: true })
-    specify: string
+    @Column({ length: 500, nullable: true })
+    description: string
 
-    @Column({ name: 'in_put', length: 100,  nullable: true })
-    inPut: string
-
-    @Column({ name: 'out_put', length: 500,  nullable: true })
-    outPut: string
-
-    @Column({ name: 'list_task_id' })
-    listTaskId: number;
-
-    @Column({ name: 'start_day', nullable: true })
-    startDay: Date;
-
-    @Column({ name: 'end_day', nullable: true })
-    endDay: Date;
+    @Column({ type: 'enum', enum: TaskStatus, default: TaskStatus.NOT_STARTED })
+    status: TaskStatus;
 
     // relation
-    @ManyToOne(() => Projects, (project) => project.id)
-    @JoinColumn({
-        name: 'list_task_id',
-        referencedColumnName: 'id',
-    })
-    listTask?: ListTask;
-
-    @ManyToOne(() => Label, (label) => label.id)
-    @JoinColumn({
-        name: 'label_id',
-        referencedColumnName: 'id',
-    })
-    label?: Label;
-
-    @OneToMany(() => MemberTask, (memberTask) => memberTask.task)
-    memberTask?: MemberTask[];
+    @OneToMany(() => CheckList, (checkList) => checkList.task)
+    checkList: CheckList[];
 
     @OneToMany(() => Comment, (comment) => comment.task)
     comments?: Comment[];
+
+    @ManyToOne(() => Projects, (project) => project.tasks)
+    project: Projects;
 }

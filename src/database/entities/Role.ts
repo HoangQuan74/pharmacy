@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CodeBase } from "./CodeBase";
 import { Projects } from "./Projects";
-import { ProjectMember } from "./ProjectMember";
+import { ProjectMember } from "./Members";
 
 @Entity({ name: 'role' })
 export class Role extends CodeBase {
