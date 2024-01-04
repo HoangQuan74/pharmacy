@@ -34,6 +34,9 @@ export class Task extends CodeBase {
 
     @Column({ type: 'enum', enum: TaskStatus, default: TaskStatus.NOT_STARTED })
     status: TaskStatus;
+    
+    @Column()
+    projectId: number;
 
     // relation
     @OneToMany(() => CheckList, (checkList) => checkList.task)
@@ -42,6 +45,10 @@ export class Task extends CodeBase {
     @OneToMany(() => Comment, (comment) => comment.task)
     comments?: Comment[];
 
-    @ManyToOne(() => Projects, (project) => project.tasks)
+    @ManyToOne(() => Projects, (project) => project.id)
+    @JoinColumn({
+        name: 'projectId',
+        referencedColumnName: 'id',
+    })
     project: Projects;
 }

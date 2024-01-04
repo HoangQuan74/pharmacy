@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CodeBase } from "./CodeBase";
 import { Users } from "./Users";
 import { Task } from "./Task";
@@ -12,8 +12,15 @@ export class Projects extends CodeBase {
     @Column({ name: 'name', length: 100 })
     name: string;
 
+    @Column()
+    ownerId: number;
+
     // relation
-    @ManyToOne(() => Users, (user) => user.projects)
+    @ManyToOne(() => Users, (user) => user.id)
+    @JoinColumn({
+        name: 'ownerId',
+        referencedColumnName: 'id',
+    })
     owner: Users;
 
     @OneToMany(() => Task, (task) => task.project)

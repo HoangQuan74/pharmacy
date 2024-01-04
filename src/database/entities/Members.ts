@@ -12,10 +12,24 @@ export class Members extends CodeBase {
     @Column()
     role: string;
 
+    @Column()
+    userId: number;
+
+    @Column()
+    projectId: number;
+
     // relation
-    @ManyToOne(() => Users, (user) => user.members)
+    @ManyToOne(() => Users, (user) => user.id)
+    @JoinColumn({
+        name: 'userId',
+        referencedColumnName: 'id',
+    })
     user?: Users;
 
-    @ManyToOne(() => Projects, (project) => project.members)
+    @ManyToOne(() => Projects, (project) => project.id)
+    @JoinColumn({
+        name: 'projectId',
+        referencedColumnName: 'id',
+    })
     project?: Projects;
 }

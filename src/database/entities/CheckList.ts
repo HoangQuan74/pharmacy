@@ -18,10 +18,24 @@ export class CheckList extends CodeBase {
     @Column({ nullable: true })
     dueDate: Date;
 
+    @Column()
+    taskId: number;
+
+    @Column()
+    userId: number;
+
     // relation
-    @ManyToOne(() => Task, (task) => task.checkList)
+    @ManyToOne(() => Task, (task) => task.id)
+    @JoinColumn({
+        name: 'taskId',
+        referencedColumnName: 'id',
+    })
     task: Task;
 
-    @ManyToOne(() => Users, (user) => user.checkList)
-    assignees: Users; 
+    @ManyToOne(() => Users, (user) => user.id)
+    @JoinColumn({
+        name: 'userId',
+        referencedColumnName: 'id',
+    })
+    assignees: Users;
 }
