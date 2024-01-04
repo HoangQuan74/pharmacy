@@ -27,8 +27,14 @@ const tasks = async (req: Request, res: Response) => {
         if (error) {
             return res.status(400).json(error);
         }
+        const { searchText, priority, status } = value;
 
-        const data = await tsv.tasks(value);
+        const data = await tsv.tasks(
+            projectId,
+            searchText,
+            priority,
+            status,
+        );
         return res.status(200).json(data);
     } catch (error) {
         console.log(error);
@@ -64,7 +70,7 @@ const getTaskById = async (req: Request, res: Response) => {
         if (!task) {
             return res.status(400).json('Task not found');
         }
-        return res.status(200).json(tasks);
+        return res.status(200).json(task);
     } catch (error) {
         console.log(error);
         return res.status(500).json(error);
@@ -92,7 +98,7 @@ const upsertTask = async (req: Request, res: Response) => {
             description: Joi.string().max(500).optional(),
         })
 
-        const { error, value } = schema.validate(req.query);
+        const { error, value } = schema.validate(req.body);
         if (error) {
             return res.status(400).json(error);
         }

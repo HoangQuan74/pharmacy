@@ -35,6 +35,7 @@ export class TaskService {
     }
 
     async tasks(
+        projectId: number,
         searchText: string = null,
         priority: Priority = null,
         status: TaskStatus = null,
@@ -44,7 +45,8 @@ export class TaskService {
             .leftJoinAndSelect('task.checkList', 'checkList')
             .leftJoinAndSelect('checkList.assignees', 'assignees')
             .leftJoinAndSelect('task.comments', 'comments')
-            .leftJoinAndSelect('comments.author', 'author');
+            .leftJoinAndSelect('comments.author', 'author')
+            .where('task.projectId = :projectId', { projectId })
         if (status) {
             qb.andWhere('task.status = :status', { status });
         }
