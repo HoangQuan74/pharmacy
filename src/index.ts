@@ -49,6 +49,8 @@ app.use(
 
 // api
 app.use('/user', require('./api/user'));
+app.use('/project', require('./api/project'));
+
 
 const httpServer = http.createServer(app);
 
