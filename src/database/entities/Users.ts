@@ -15,10 +15,10 @@ export class Users extends CodeBase {
     @Column({ length: 50 })
     fullName: string;
 
-    @Column({ length: 50 })
+    @Column({ length: 50, nullable: true })
     displayName: string;
 
-    @Column({ length: 500 })
+    @Column({ length: 500, nullable: true  })
     avatar: string;
 
     @Column({ length: 50 })

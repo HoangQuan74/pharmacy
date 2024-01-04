@@ -131,7 +131,7 @@ const saveMember = async (req: Request, res: Response) => {
         if (!userMember) {
             return res.status(400).json('user not found');
         }
-        const member = msv.create({ role: value.role, userId: userMember.id });
+        const member = msv.create({ role: value.role, userId: userMember.id, projectId: projectId });
         const result = await msv.save(member);
         return res.status(200).json(result);
     } catch (error) {

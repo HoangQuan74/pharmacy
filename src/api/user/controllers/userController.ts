@@ -10,8 +10,8 @@ const Joi = require("joi");
 const register = async (req: Request, res: Response) => {
   try {
     const schema = Joi.object({
-      firstName: Joi.string().required(),
-      lastName: Joi.string().required(),
+      fullName: Joi.string().required(),
+      displayName: Joi.string().optional(),
       email: Joi.string().email().required(),
       password: Joi.string().min(6),
       dob: Joi.date().optional(),
