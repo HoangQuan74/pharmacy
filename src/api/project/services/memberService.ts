@@ -33,4 +33,13 @@ export class MemberService {
         const result = await this.memberRes.update(where, data);
         return !!result.affected;
     }
+
+    async getMembersByProjectId(projectId: number) {
+        const qb = this.memberRes
+            .createQueryBuilder('member')
+            .leftJoinAndSelect('member.user', 'user')
+            .leftJoin('member.project', 'project')
+            .where('project.id = :projectId', { projectId })
+        return qb.getMany();
+    }
 }

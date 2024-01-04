@@ -14,10 +14,24 @@ export class Comment extends CodeBase {
     @Column({ default: false })
     isResolved: Boolean;
 
+    @Column()
+    userId: number;
+
+    @Column()
+    taskId: number;
+
     // relation
     @ManyToOne(() => Task, (task) => task.comments)
+    @JoinColumn({
+        name: 'taskId',
+        referencedColumnName: 'id',
+    })
     task: Task;
 
-    @ManyToOne(() => Users, (user) => user.comments)
+    @ManyToOne(() => Users, (user) => user.id)
+    @JoinColumn({
+        name: 'userId',
+        referencedColumnName: 'id',
+    })
     author?: Users;
 }
