@@ -66,7 +66,7 @@ const login = async (req: Request, res: Response) => {
   }
 }
 
-module.exports = {
+export const userController = {
   register,
   login,
 };
