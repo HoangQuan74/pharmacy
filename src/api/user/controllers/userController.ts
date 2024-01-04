@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Users } from "../../../../src/database/entities/Users";
 import { UserService } from "../services/userService";
-import { gender } from "../../../../src/common/constants/userConstant";
+import { Gender } from "../../../../src/common/constants/userConstant";
 import { BadRequestException, ForbiddenException, NotFoundException } from "@nestjs/common";
 import { makeToken } from "../../../../src/common/helper/token";
 import { hashPass } from "../../../../src/common/helper/hashPass";
@@ -16,8 +16,8 @@ const register = async (req: Request, res: Response) => {
       password: Joi.string().min(6),
       dob: Joi.date().optional(),
       gender: Joi.string()
-        .valid(...Object.values(gender))
-        .default(gender.MALE),
+        .valid(...Object.values(Gender))
+        .default(Gender.MALE),
       phone: Joi.string().pattern(/^[0-9]{10}$/).optional(),
     });
 
@@ -66,7 +66,7 @@ const login = async (req: Request, res: Response) => {
   }
 }
 
-module.exports = {
+export const userController = {
   register,
   login,
 };

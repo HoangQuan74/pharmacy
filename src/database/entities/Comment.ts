@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CodeBase } from "./CodeBase";
 import { Task } from "./Task";
-import { ProjectMember } from "./ProjectMember";
+import { Users } from "./Users";
 
 @Entity({ name: 'comment' })
 export class Comment extends CodeBase {
@@ -11,36 +11,13 @@ export class Comment extends CodeBase {
     @Column({ length: 1000 })
     content: string;
 
-    @Column({ name: 'member_id' })
-    memberId: number;
-
-    @Column({ name: 'task_id' })
-    taskId: number;
-
-    @Column({ name: 'parent_comment_id', default: null, nullable: true })
-    parentCommentId: number
+    @Column({ default: false })
+    isResolved: Boolean;
 
     // relation
-    @OneToOne(()=> Comment, (comment) => comment.id, {
-        createForeignKeyConstraints: false,
-    })
-    @JoinColumn({
-        name: 'parent_comment_id',
-        referencedColumnName: 'id',
-    })
-    parentComment?: Comment;
+    @ManyToOne(() => Task, (task) => task.comments)
+    task: Task;
 
-    @ManyToOne(() => Task, (task)=> task.id)
-    @JoinColumn({
-        name: 'task_id',
-        referencedColumnName: 'id',
-    })
-    task?: Task;
-
-    @ManyToOne(() => ProjectMember, (projectMember)=> projectMember.id)
-    @JoinColumn({
-        name: 'member_id',
-        referencedColumnName: 'id',
-    })
-    projectMember?: ProjectMember;
+    @ManyToOne(() => Users, (user) => user.comments)
+    author?: Users;
 }

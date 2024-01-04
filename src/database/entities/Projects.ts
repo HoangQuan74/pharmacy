@@ -1,28 +1,24 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CodeBase } from "./CodeBase";
-import { Role } from "./Role";
-import { ProjectMember } from "./ProjectMember";
-import { ListTask } from "./ListTask";
-import { Label } from "./Label";
+import { Users } from "./Users";
+import { Task } from "./Task";
+import { Members } from "./Members";
 
 @Entity({ name: 'projects' })
 export class Projects extends CodeBase {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: 'name', length: 50 })
+    @Column({ name: 'name', length: 100 })
     name: string;
 
     // relation
-    @OneToMany(() => Role, (role) => role.project)
-    roles?: Role[];
+    @ManyToOne(() => Users, (user) => user.projects)
+    owner: Users;
 
-    @OneToMany(() => ProjectMember, (projectMember) => projectMember.project)
-    projectMembers?: ProjectMember[];
+    @OneToMany(() => Task, (task) => task.project)
+    tasks?: Task[];
 
-    @OneToMany(() => ListTask, (listTask) => listTask.project)
-    listTasks?: ListTask[];
-
-    @OneToMany(() => Label, (label) => label.project)
-    labels?: Label[];
+    @OneToMany(() => Members, (member) => member.project)
+    members?: Members[];
 }
