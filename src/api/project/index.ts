@@ -10,6 +10,8 @@ const router = express.Router();
 
 
 router.get('/members', authInstance.auth, memberController.members)
-router.put('/members/:id', authInstance.auth, memberController.updateMembers)
+router.post('/members', authInstance.auth, memberController.saveMember)
+router.put('/members/:id', authInstance.auth, memberController.updateMember)
+router.delete('/members/:id', authInstance.auth, memberController.deleteMember)
 
 module.exports = router;
