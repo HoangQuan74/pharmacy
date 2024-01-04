@@ -39,10 +39,14 @@ export class Task extends CodeBase {
     projectId: number;
 
     // relation
-    @OneToMany(() => CheckList, (checkList) => checkList.task)
+    @OneToMany(() => CheckList, (checkList) => checkList.task, {
+        cascade: true
+    })
     checkList: CheckList[];
 
-    @OneToMany(() => Comment, (comment) => comment.task)
+    @OneToMany(() => Comment, (comment) => comment.task, {
+        cascade: true
+    })
     comments?: Comment[];
 
     @ManyToOne(() => Projects, (project) => project.id)
