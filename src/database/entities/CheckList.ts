@@ -16,12 +16,12 @@ export class CheckList extends CodeBase {
     startDay: Date;
 
     @Column({ nullable: true })
-    dueDate: Date;
+    dueDay: Date;
 
     @Column()
     taskId: number;
 
-    @Column()
+    @Column({ nullable: true })
     userId: number;
 
     // relation
