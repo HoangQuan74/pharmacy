@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as Joi from 'joi';
-import { projectService } from "../services/projectService";
+import { ProjectService } from "../services/projectService";
 import { TaskService } from "../services/taskService";
 import { Priority, TaskStatus } from "../../../database/entities/Task";
 
@@ -9,7 +9,7 @@ const tasks = async (req: Request, res: Response) => {
         const id = req.userData.id;
         const projectId = parseInt(req.params.id);
 
-        const psv = new projectService();
+        const psv = new ProjectService();
         const tsv = new TaskService();
 
         const isMember = await psv.isMember(projectId, id);
@@ -48,7 +48,7 @@ const getTaskById = async (req: Request, res: Response) => {
         const projectId = parseInt(req.params.id);
         const taskId = parseInt(req.params.tid);
 
-        const psv = new projectService();
+        const psv = new ProjectService();
         const tsv = new TaskService();
 
         const isMember = await psv.isMember(projectId, id);
@@ -82,7 +82,7 @@ const upsertTask = async (req: Request, res: Response) => {
         const id = req.userData.id;
         const projectId = parseInt(req.params.id);
 
-        const psv = new projectService();
+        const psv = new ProjectService();
         const tsv = new TaskService();
 
         const isMember = await psv.isMember(projectId, id);
@@ -123,7 +123,7 @@ const deleteTaskById = async (req: Request, res: Response) => {
         const projectId = parseInt(req.params.id);
         const taskId = parseInt(req.params.tid);
 
-        const psv = new projectService();
+        const psv = new ProjectService();
         const tsv = new TaskService();
 
         const isMember = await psv.isMember(projectId, id);

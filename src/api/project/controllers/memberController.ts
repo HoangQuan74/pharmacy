@@ -2,12 +2,12 @@ import { Request, Response } from "express";
 import * as Joi from 'joi';
 import { UserService } from "../../user/services/userService";
 import { MemberService } from "../services/memberService";
-import { projectService } from "../services/projectService";
+import { ProjectService } from "../services/projectService";
 
 const members = async (req: Request, res: Response) => {
     try {
         const id = req.userData.id;
-        const psv = new projectService();
+        const psv = new ProjectService();
         const projectId = parseInt(req.params.id);
         const isMember = await psv.isMember(projectId, id);
         if (!isMember) {
@@ -35,7 +35,7 @@ const updateMember = async (req: Request, res: Response) => {
         if (error) {
             return res.status(400).json(error);
         }
-        const psv = new projectService();
+        const psv = new ProjectService();
         const project = await psv.getOne({
             where: {
                 id: projectId,
@@ -69,7 +69,7 @@ const deleteMember = async (req: Request, res: Response) => {
         const memberId = parseInt(req.params.mid);
         const projectId = parseInt(req.params.id);
 
-        const psv = new projectService();
+        const psv = new ProjectService();
         const project = await psv.getOne({
             where: {
                 id: projectId,
@@ -110,7 +110,7 @@ const saveMember = async (req: Request, res: Response) => {
         if (error) {
             return res.status(400).json(error);
         }
-        const psv = new projectService();
+        const psv = new ProjectService();
         const project = await psv.getOne({
             where: {
                 id: projectId,
