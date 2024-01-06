@@ -23,8 +23,8 @@ const createProject = async (req: Request, res: Response) => {
 
     const membersv = new MemberService();
     const project = projectsv.create({name, ownerId: userId});
-    await projectsv.save(project);
-    const owner = membersv.create({role: MemberRoles.ADMIN, userId: userId, projectId: project.id});
+    const projectRes = await projectsv.save(project);
+    const owner = membersv.create({role: MemberRoles.ADMIN, userId: userId, projectId: projectRes.id});
     await membersv.save(owner);
     const result = await projectsv.save(project);
 

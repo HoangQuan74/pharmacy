@@ -3,6 +3,7 @@ import Auth from "../../common/helper/auth";
 import { memberController } from "./controllers/memberController";
 import { taskController } from "./controllers/taskController";
 import { projectController } from "./controllers/projectController";
+import { commentController } from "./controllers/commentController";
 
 const authInstance = new Auth();
 const router = express.Router();
@@ -38,6 +39,20 @@ router.delete(
   "/:id/tasks/:tid",
   authInstance.auth,
   taskController.deleteTaskById
+);
+
+//comment
+router.post("/:id/tasks/:tid/comments", authInstance.auth, commentController.createComment);
+router.get("/:id/tasks/:tid/comments", authInstance.auth, commentController.getComments);
+router.put(
+  "/comments/:cid",
+  authInstance.auth,
+  commentController.updateComment
+);
+router.delete(
+  "/comments/:cid",
+  authInstance.auth,
+  commentController.deleteComment
 );
 
 module.exports = router;

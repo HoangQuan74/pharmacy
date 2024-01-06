@@ -3,35 +3,48 @@ import { CodeBase } from "./CodeBase";
 import { Task } from "./Task";
 import { Users } from "./Users";
 
-@Entity({ name: 'comment' })
+@Entity({ name: "comment" })
 export class Comment extends CodeBase {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ length: 1000 })
-    content: string;
+  @Column({ length: 1000 })
+  content: string;
 
-    @Column({ default: false })
-    isResolved: Boolean;
+  @Column({ default: false })
+  isResolved: Boolean;
 
-    @Column()
-    userId: number;
+  @Column()
+  userId: number;
 
-    @Column()
-    taskId: number;
+  @Column()
+  taskId: number;
 
-    // relation
-    @ManyToOne(() => Task, (task) => task.comments)
-    @JoinColumn({
-        name: 'taskId',
-        referencedColumnName: 'id',
-    })
-    task: Task;
+  @Column({ nullable: true })
+  parentId: number;
 
-    @ManyToOne(() => Users, (user) => user.id)
-    @JoinColumn({
-        name: 'userId',
-        referencedColumnName: 'id',
-    })
-    author?: Users;
+  // relation
+  @ManyToOne(() => Task, (task) => task.comments)
+  @JoinColumn({
+    name: "taskId",
+    referencedColumnName: "id",
+  })
+  task: Task;
+
+  @ManyToOne(() => Users, (user) => user.id)
+  @JoinColumn({
+    name: "userId",
+    referencedColumnName: "id",
+  })
+  author?: Users;
+
+  @ManyToOne(() => Comment, (comment) => comment.replies)
+  @JoinColumn({
+    name: "parentId",
+    referencedColumnName: "id",
+  })
+  parent: Comment;
+
+  @OneToMany(() => Comment, (comment) => comment.parent)
+  replies?: Comment[];
 }
