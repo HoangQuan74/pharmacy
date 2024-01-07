@@ -4,6 +4,7 @@ import { memberController } from "./controllers/memberController";
 import { taskController } from "./controllers/taskController";
 import { projectController } from "./controllers/projectController";
 import { commentController } from "./controllers/commentController";
+import { checkListController } from "./controllers/checkListController";
 
 const authInstance = new Auth();
 const router = express.Router();
@@ -53,6 +54,16 @@ router.delete(
   "/comments/:cid",
   authInstance.auth,
   commentController.deleteComment
+)
+
+// checkList of tasks
+router.post("/:id/tasks/:tid/check-list", authInstance.auth, checkListController.upsertCheckList); // api is update (if body have id) or insert
+router.get("/:id/tasks/:tid/check-list", authInstance.auth, checkListController.checkLists);
+router.get("/:id/tasks/:tid/check-list/:clid", authInstance.auth, checkListController.checkListdetail);
+router.delete(
+  "/:id/tasks/:tid/check-list/:clid",
+  authInstance.auth,
+  checkListController.deleteCheckListById
 );
 
 module.exports = router;

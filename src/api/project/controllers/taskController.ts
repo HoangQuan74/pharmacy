@@ -91,12 +91,22 @@ const upsertTask = async (req: Request, res: Response) => {
         }
 
         const schema = Joi.object({
-            id: Joi.number().optional(),
-            name: Joi.string().required(),
-            priority: Joi.string().valid(...Object.values(Priority)).optional(),
-            status: Joi.string().valid(...Object.values(TaskStatus)).optional(),
-            description: Joi.string().max(500).optional(),
-        })
+          id: Joi.number().optional(),
+          name: Joi.string().required(),
+          startDay: Joi.date().optional(),
+          dueDay: Joi.when("startDay", {
+            is: Joi.exist(),
+            then: Joi.date().optional().greater(Joi.ref("startDay")),
+            otherwise: Joi.date().optional(),
+          }),
+          priority: Joi.string()
+            .valid(...Object.values(Priority))
+            .optional(),
+          status: Joi.string()
+            .valid(...Object.values(TaskStatus))
+            .optional(),
+          description: Joi.string().max(500).optional(),
+        });
 
         const { error, value } = schema.validate(req.body);
         if (error) {

@@ -18,41 +18,47 @@ export enum TaskStatus {
     DONE = 'DONE',
     PENDING = 'PENDING',
 }
-@Entity({ name: 'task' })
+@Entity({ name: "task" })
 export class Task extends CodeBase {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ length: 50 })
-    name: string;
+  @Column({ length: 50 })
+  name: string;
 
-    @Column({ type: 'enum', enum: Priority, nullable: true })
-    priority: Priority;
+  @Column({ type: "enum", enum: Priority, nullable: true })
+  priority: Priority;
 
-    @Column({ length: 500, nullable: true })
-    description: string
+  @Column({ length: 500, nullable: true })
+  description: string;
 
-    @Column({ type: 'enum', enum: TaskStatus, default: TaskStatus.NOT_STARTED })
-    status: TaskStatus;
-    
-    @Column()
-    projectId: number;
+  @Column({ nullable: true })
+  startDay: Date;
 
-    // relation
-    @OneToMany(() => CheckList, (checkList) => checkList.task, {
-        cascade: true
-    })
-    checkList: CheckList[];
+  @Column({ nullable: true })
+  dueDay: Date;
 
-    @OneToMany(() => Comment, (comment) => comment.task, {
-        cascade: true
-    })
-    comments?: Comment[];
+  @Column({ type: "enum", enum: TaskStatus, default: TaskStatus.NOT_STARTED })
+  status: TaskStatus;
 
-    @ManyToOne(() => Projects, (project) => project.id)
-    @JoinColumn({
-        name: 'projectId',
-        referencedColumnName: 'id',
-    })
-    project: Projects;
+  @Column()
+  projectId: number;
+
+  // relation
+  @OneToMany(() => CheckList, (checkList) => checkList.task, {
+    cascade: true,
+  })
+  checkList: CheckList[];
+
+  @OneToMany(() => Comment, (comment) => comment.task, {
+    cascade: true,
+  })
+  comments?: Comment[];
+
+  @ManyToOne(() => Projects, (project) => project.id)
+  @JoinColumn({
+    name: "projectId",
+    referencedColumnName: "id",
+  })
+  project: Projects;
 }

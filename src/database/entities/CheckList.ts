@@ -12,16 +12,10 @@ export class CheckList extends CodeBase {
     @Column({ length: 100 })
     name: string;
 
-    @Column({ nullable: true })
-    startDay: Date;
-
-    @Column({ nullable: true })
-    dueDate: Date;
-
     @Column()
     taskId: number;
 
-    @Column()
+    @Column({ nullable: true })
     userId: number;
 
     // relation
