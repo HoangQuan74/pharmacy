@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
-import { ProjectService } from "../services/projectService";
-import { MemberService } from "../services/memberService";
-import { MemberRoles } from "../../../common/constants/userConstant";
-import { TaskService } from "../services/taskService";
-import { CommentService } from "../services/commentService";
 import { IsNull } from "typeorm";
+import { CommentService } from "../services/commentService";
+import { ProjectService } from "../services/projectService";
 const Joi = require("joi");
 
 const createComment = async (req: Request, res: Response) => {
@@ -71,7 +68,6 @@ const getComments = async (req: Request, res: Response) => {
       select: {
         author: {
           id: true,
-          displayName: true,
           fullName: true
         },
         replies: {
@@ -81,7 +77,6 @@ const getComments = async (req: Request, res: Response) => {
           author: {
             id: true,
             fullName: true,
-            displayName: true
           }
         },
       },

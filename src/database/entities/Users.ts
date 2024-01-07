@@ -1,6 +1,6 @@
 import { Column, PrimaryGeneratedColumn, Entity, OneToMany } from "typeorm";
 import { CodeBase } from "./CodeBase";
-import { Gender } from "../../common/constants/userConstant";
+import { Gender, defaultAvatar } from "../../common/constants/userConstant";
 import { Members } from "./Members";
 import { ChannelMember } from "./ChannelMemner";
 import { ChatMessage } from "./ChatMessage";
@@ -15,10 +15,7 @@ export class Users extends CodeBase {
     @Column({ length: 50 })
     fullName: string;
 
-    @Column({ length: 50, nullable: true })
-    displayName: string;
-
-    @Column({ length: 500, nullable: true  })
+    @Column({ length: 500, default: defaultAvatar})
     avatar: string;
 
     @Column({ length: 50 })

@@ -5,13 +5,13 @@ import { Gender } from "../../../../src/common/constants/userConstant";
 import { BadRequestException, ForbiddenException, NotFoundException } from "@nestjs/common";
 import { makeToken } from "../../../../src/common/helper/token";
 import { hashPass } from "../../../../src/common/helper/hashPass";
+import { firebaseAdmin } from "../../../config/firebase";
 const Joi = require("joi");
 
 const register = async (req: Request, res: Response) => {
   try {
     const schema = Joi.object({
       fullName: Joi.string().required(),
-      displayName: Joi.string().optional(),
       email: Joi.string().email().required(),
       password: Joi.string().min(6),
       dob: Joi.date().optional(),
@@ -29,9 +29,23 @@ const register = async (req: Request, res: Response) => {
     if (isExistsEmail)
       return res.status(400).json({ detail: `email was existsed` });
 
+
+    
     const user: Users = value;
     const data = await us.saveUser(user);
     if (!data) return res.status(403).json({ detail: `error register` });
+
+    const firestore = firebaseAdmin.firestore();
+    firestore
+      .collection("users")
+      .doc(data.id.toString())
+      .set({
+        DisplayName: data.fullName,
+        CreatedAt: data.createdAt,
+        Email: data.email,
+        PhotoUrl: data.avatar,
+      });
+  
     return res.status(200).json(data);
   } catch (e) {
     console.log(e);
