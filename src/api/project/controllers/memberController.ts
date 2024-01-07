@@ -4,6 +4,8 @@ import { UserService } from "../../user/services/userService";
 import { MemberService } from "../services/memberService";
 import { ProjectService } from "../services/projectService";
 import { firebaseAdmin } from "../../../config/firebase";
+import SendGrid from "../../../config/sendgrid";
+import { MemberRoles } from "../../../common/constants/userConstant";
 
 const members = async (req: Request, res: Response) => {
   try {
@@ -110,45 +112,68 @@ const saveMember = async (req: Request, res: Response) => {
     const id = req.userData.id;
     const projectId = parseInt(req.params.id);
 
-    const scheam = Joi.object({
-      role: Joi.string().required(),
-      userId: Joi.number().required(),
+    const schema = Joi.object({
+      email: Joi.string().email().required(),
     });
 
-    const { error, value } = scheam.validate(req.body);
+    const { error, value } = schema.validate(req.body);
     if (error) {
       return res.status(400).json(error);
     }
+    const usersv = new UserService();
+    const existingUser = await usersv.getOne({where: {email: value.email}})
+    if(!existingUser) return res.status(400).json("Email is not registered");
     const psv = new ProjectService();
+    const membersv = new MemberService();
     const project = await psv.getOne({
       where: {
         id: projectId,
       },
-      relations: ["owner", "members"],
+      relations: ["members"],
       select: {
         members: {
           userId: true,
         },
       },
     });
+
+    const member = await membersv.getOne({
+      where: {
+        userId: id,
+        projectId: projectId,
+      },
+      relations: {
+        user: true,
+      },
+    });
     if (!project) {
       return res.status(400).json("Project not found");
-    } else if (project.owner.id !== id) {
-      return res.status(400).json("You are not owner of this project");
+    }
+    if (!member || member.role !== MemberRoles.ADMIN) {
+      return res.status(400).json("You are not an admin of this project");
     }
 
-    const msv = new MemberService();
     const us = new UserService();
     const userMember = await us.getOne({ where: { id: value.userId } });
     if (!userMember) {
       return res.status(400).json("user not found");
     }
-    const member = msv.create({
-      role: value.role,
+
+    await SendGrid.send({
+      to: req.body.email,
+      from: process.env.EMAIL,
+      templateId: process.env.SG_TEMPLATE_ID,
+      dynamicTemplateData: {
+        adminName: member.user.fullName,
+        projectName: project.name,
+      },
+    });
+    const _member = membersv.create({
+      role: MemberRoles.MEMBER,
       userId: userMember.id,
       projectId: projectId,
     });
-    const result = await msv.save(member);
+    const result = await membersv.save(_member);
 
     const roomCollection = firebaseAdmin.firestore().collection("rooms");
 
@@ -167,7 +192,7 @@ const saveMember = async (req: Request, res: Response) => {
     console.log(error);
     return res.status(500).json(error);
   }
-};
+}; 
 
 export const memberController = {
   members,
