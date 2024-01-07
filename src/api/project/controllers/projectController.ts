@@ -3,6 +3,7 @@ import { ProjectService } from "../services/projectService";
 import { MemberService } from "../services/memberService";
 import { MemberRoles } from "../../../common/constants/userConstant";
 import { TaskService } from "../services/taskService";
+import { In } from "typeorm";
 const Joi = require("joi");
 
 const createProject = async (req: Request, res: Response) => {
@@ -22,9 +23,13 @@ const createProject = async (req: Request, res: Response) => {
       return res.status(400).json({ detail: `Project name existed` });
 
     const membersv = new MemberService();
-    const project = projectsv.create({name, ownerId: userId});
+    const project = projectsv.create({ name, ownerId: userId });
     const projectRes = await projectsv.save(project);
-    const owner = membersv.create({role: MemberRoles.ADMIN, userId: userId, projectId: projectRes.id});
+    const owner = membersv.create({
+      role: MemberRoles.ADMIN,
+      userId: userId,
+      projectId: projectRes.id,
+    });
     await membersv.save(owner);
     const result = await projectsv.save(project);
 
@@ -40,8 +45,20 @@ const createProject = async (req: Request, res: Response) => {
 const getProjects = async (req: Request, res: Response) => {
   try {
     const userId = req.userData.id;
-    const projectsv = new ProjectService();
-    const result = await projectsv.getAll({where: {ownerId: userId}, relations: {members: true}})
+    const membersv = new MemberService();
+    const members = await membersv.getAll({
+      where: { userId: userId },
+      relations: ["project", "project.members"],
+    });
+    const result = members.map((member) => {
+      return {
+        role: member.role,
+        isOwner: userId === member.project.ownerId,
+        memberCount: member.project.members.length,
+        name: member.project.name,
+        id: member.project.id,
+      };
+    });
     return res.status(200).json(result);
   } catch (e) {
     console.log(e);
@@ -74,7 +91,7 @@ const updateProject = async (req: Request, res: Response) => {
     } else if (project.owner.id !== userId) {
       return res.status(400).json("You are not owner of this project");
     }
-    const {name} = value;
+    const { name } = value;
 
     const projectsv = new ProjectService();
     const isUniqueName = await projectsv.isUniqueName(userId, name);
@@ -104,10 +121,7 @@ const getProjectById = async (req: Request, res: Response) => {
       where: {
         id: projectId,
       },
-      relations: [
-        "members",
-        "tasks"
-      ],
+      relations: ["members", "tasks"],
     });
     if (!project) {
       return res.status(400).json("Project not found");
@@ -126,7 +140,7 @@ const deleteProject = async (req: Request, res: Response) => {
 
     const projectService = new ProjectService();
     const taskService = new TaskService();
-    const memberService = new MemberService;
+    const memberService = new MemberService();
 
     const project = await projectService.getOne({
       where: {
@@ -139,12 +153,14 @@ const deleteProject = async (req: Request, res: Response) => {
     } else if (project.owner.id !== userId) {
       return res.status(400).json("You are not owner of this project");
     }
-    const tasks = await taskService.getAll({where: {projectId: projectId}});
+    const tasks = await taskService.getAll({ where: { projectId: projectId } });
     await taskService.softRemove([...tasks]);
-    const members = await memberService.getAll({ where: { projectId: projectId } });
+    const members = await memberService.getAll({
+      where: { projectId: projectId },
+    });
     await memberService.softRemove([...members]);
     await projectService.softRemove([project]);
-    
+
     return res.status(200).json();
   } catch (error) {
     console.log(error);
@@ -157,5 +173,5 @@ export const projectController = {
   getProjects,
   updateProject,
   getProjectById,
-  deleteProject
+  deleteProject,
 };
