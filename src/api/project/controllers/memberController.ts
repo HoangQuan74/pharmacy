@@ -75,12 +75,7 @@ const deleteMember = async (req: Request, res: Response) => {
       where: {
         id: projectId,
       },
-      relations: ["owner", "members"],
-      select: {
-        members: {
-          userId: true,
-        },
-      },
+      relations: ["owner"],
     });
     if (!project) {
       return res.status(400).json("Project not found");
