@@ -22,10 +22,7 @@ const checkLists = async (req: Request, res: Response) => {
         const checkLists = await clsv.getAll({
             where: {
                 taskId: taskId
-            },
-            relations: [
-                'assignees',
-            ]
+            }
         })
         return res.status(200).json(checkLists);
     } catch (error) {
@@ -70,9 +67,8 @@ const upsertCheckList = async (req: Request, res: Response) => {
     const schema = Joi.object({
         id: Joi.number().optional(),
         name: Joi.string().required(),
-        userId: Joi.number().optional(),
     })
-    const { error, value } = schema.validate(req.query);
+    const { error, value } = schema.validate(req.body);
     if (error) {
         return res.status(400).json(error);
     }
@@ -82,12 +78,6 @@ const upsertCheckList = async (req: Request, res: Response) => {
         const oldCheckList = await clsv.getOne({ where: { id: value.id, taskId: taskId } });
         if (!oldCheckList) {
             return res.status(400).json('CheckList not found');
-        }
-    }
-    if (value.user_id) {
-        const isMember = await psv.isMember(projectId, value.user_id);
-        if (!isMember) {
-            return res.status(400).json(`user has id(${value.id}) is not member of project`);
         }
     }
     const checkList = clsv.create({ ...value, taskId });
@@ -118,8 +108,8 @@ const deleteCheckListById = async (req: Request, res: Response) => {
         if (!checkList) {
             return res.status(400).json('Check list not found');
         }
-        const result = await clsv.softRemove([checkList]);
-        return res.status(200).json(result);
+        await clsv.softRemove([checkList]);
+        return res.status(200).json(true);
     } catch (error) {
         console.log(error);
         return res.status(500).json(error);
