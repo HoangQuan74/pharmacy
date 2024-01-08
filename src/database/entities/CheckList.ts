@@ -15,9 +15,6 @@ export class CheckList extends CodeBase {
     @Column()
     taskId: number;
 
-    @Column({ nullable: true })
-    userId: number;
-
     // relation
     @ManyToOne(() => Task, (task) => task.id)
     @JoinColumn({

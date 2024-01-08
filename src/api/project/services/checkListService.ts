@@ -37,8 +37,6 @@ export class CheckListService {
     async getCheckListById(projectId: number, checkListId: number) {
         const data = await this.checkListRes
             .createQueryBuilder('checkList')
-            .leftJoinAndSelect('checkList.assignees', 'user')
-            .leftJoinAndSelect('user.members', 'member', 'member.projectId = :projectId', { projectId })
             .leftJoin('checkList.task', 'task')
             .where('task.projectId = :projectId', { projectId })
             .andWhere('checkList.id = :checkListId', { checkListId })

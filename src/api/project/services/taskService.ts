@@ -43,7 +43,6 @@ export class TaskService {
         const qb = this.taskRes
             .createQueryBuilder('task')
             .leftJoinAndSelect('task.checkList', 'checkList')
-            .leftJoinAndSelect('checkList.assignees', 'assignees')
             .leftJoinAndSelect('task.comments', 'comments')
             .leftJoinAndSelect('comments.author', 'author')
             .where('task.projectId = :projectId', { projectId })
@@ -57,7 +56,6 @@ export class TaskService {
             qb.andWhere(new Brackets((qb) => {
                 qb.orWhere('task.name = :searchText')
                     .orWhere('task.description = :searchText')
-                    .orWhere('assignees.fullName = :searchText')
             })).setParameters({ searchText: `%${searchText}%` });
         }
         const [items, total] = await qb.getManyAndCount();
