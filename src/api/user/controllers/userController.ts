@@ -176,10 +176,44 @@ const upload = async (req: Request, res: Response) => {
   }
 };
 
+const changePassword = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userData.id;
+    const schema = Joi.object({
+      password: Joi.string().min(6).required(),
+      newPassword: Joi.string().min(6).required(),
+      confirmPassword: Joi.any().equal(Joi.ref("newPassword")).required(),
+    });
+
+    const { error, value } = schema.validate(req.body);
+    if (error) return res.status(400).json({ detai: error.message });
+
+    const usersv = new UserService()
+    const user = await usersv.getOne({
+      where: {
+        id: userId,
+        password: hashPass(value.password),
+      },
+    });
+
+    if(!user){
+      return res.status(400).json("Wrong password, please check it again");
+    }
+
+    user.password = hashPass(value.newPassword)
+    await usersv.save(user)
+
+    res.status(200).json("Change password successful");
+  } catch (err) {
+    return res.status(500).json({ detail: err.message });
+  }
+};
+
 export const userController = {
   register,
   login,
   getProfile,
   updateProfile,
-  upload
+  upload,
+  changePassword
 };
