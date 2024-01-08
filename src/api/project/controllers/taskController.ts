@@ -93,10 +93,10 @@ const upsertTask = async (req: Request, res: Response) => {
         const schema = Joi.object({
           id: Joi.number().optional(),
           name: Joi.string().required(),
-          startDay: Joi.date().optional(),
+          startDay: Joi.date().allow(null).optional(),
           dueDay: Joi.when("startDay", {
             is: Joi.exist(),
-            then: Joi.date().optional().greater(Joi.ref("startDay")),
+            then: Joi.date().allow(null).optional().greater(Joi.ref("startDay")),
             otherwise: Joi.date().optional(),
           }),
           priority: Joi.string()
