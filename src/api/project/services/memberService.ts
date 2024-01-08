@@ -35,11 +35,16 @@ export class MemberService {
     }
 
     async getMembersByProjectId(projectId: number) {
-        const qb = this.memberRes
+        const data = await this.memberRes
             .createQueryBuilder('member')
             .leftJoinAndSelect('member.user', 'user')
             .leftJoin('member.project', 'project')
+            .addSelect('project.ownerId')
             .where('project.id = :projectId', { projectId })
-        return qb.getMany();
+            .getMany();
+        data.forEach((member) => {
+            member.isOwner = !!(member.userId === member.project.ownerId);
+        })
+        return data;
     }
 }
