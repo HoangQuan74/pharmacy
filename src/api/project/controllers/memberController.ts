@@ -158,7 +158,7 @@ const sendInvitation = async (req: Request, res: Response) => {
 
     const token = jwt.sign(
       {
-        userId: id,
+        userId: existingUser.id,
         projectId: projectId,
       },
       jwtObj.secret
