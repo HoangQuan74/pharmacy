@@ -3,6 +3,7 @@ import { CodeBase } from "./CodeBase";
 import { Projects } from "./Projects";
 import { CheckList } from "./CheckList";
 import { Comment } from "./Comment";
+import { TaskMember } from "./TaskMember";
 
 export enum Priority {
     HIGH = 'HIGH',
@@ -61,4 +62,10 @@ export class Task extends CodeBase {
     referencedColumnName: "id",
   })
   project: Projects;
+
+  @OneToMany(
+    () => TaskMember,
+    (taskMember) => taskMember.task
+  )
+  taskMembers: TaskMember[];
 }

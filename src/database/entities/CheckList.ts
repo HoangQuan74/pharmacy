@@ -25,11 +25,4 @@ export class CheckList extends CodeBase {
         referencedColumnName: 'id',
     })
     task: Task;
-
-    @ManyToOne(() => Users, (user) => user.id)
-    @JoinColumn({
-        name: 'userId',
-        referencedColumnName: 'id',
-    })
-    assignees: Users;
 }
