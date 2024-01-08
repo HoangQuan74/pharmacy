@@ -62,7 +62,6 @@ const getTaskById = async (req: Request, res: Response) => {
             },
             relations: [
                 'checkList',
-                'checkList.assignees',
                 'comments',
                 'comments.author',
             ]
