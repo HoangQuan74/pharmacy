@@ -6,6 +6,7 @@ import { BadRequestException, ForbiddenException, NotFoundException } from "@nes
 import { makeToken } from "../../../../src/common/helper/token";
 import { hashPass } from "../../../../src/common/helper/hashPass";
 import { firebaseAdmin } from "../../../config/firebase";
+//import * as multer from 'multer';
 const Joi = require("joi");
 
 const register = async (req: Request, res: Response) => {
@@ -80,7 +81,63 @@ const login = async (req: Request, res: Response) => {
   }
 }
 
+const getProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userData.id;
+    const userService = new UserService();
+
+    const { password, ...user } = await userService.getOne({where: {id: userId}}); 
+
+    return res.status(200).json(user);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ detail: e.message });
+  }
+};
+
+const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userData.id;
+
+    const schema = Joi.object({
+      fullName: Joi.string().required(),
+      avatar: Joi.string().required(),
+      dob: Joi.date().optional(),
+      gender: Joi.string()
+        .valid(...Object.values(Gender))
+        .required(),
+      phone: Joi.string()
+        .pattern(/^[0-9]{10}$/)
+        .optional(),
+    });
+
+    const { error, value } = schema.validate(req.body);
+    if (error) return res.status(400).json({ detai: error.message });
+
+    const userService = new UserService();
+
+    const user = await userService.getOne({
+      where: { id: userId },
+    });
+
+    const newUser = userService.create({...user, ...value});
+    const {password, ...userInfor} = await userService.save(newUser);
+
+
+    return res.status(200).json(userInfor);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ detail: e.message });
+  }
+};
+
+// const upload = async (req: Request, res: Response) => {
+ 
+// };
+
 export const userController = {
   register,
   login,
+  getProfile,
+  updateProfile
 };
