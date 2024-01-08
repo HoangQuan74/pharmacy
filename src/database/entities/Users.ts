@@ -43,9 +43,6 @@ export class Users extends CodeBase {
     @OneToMany(() => Projects, (project) => project.owner)
     projects: Projects[];
 
-    @OneToMany(() => CheckList, (checkList) => checkList.assignees)
-    checkList: CheckList[];
-
     @OneToMany(() => Comment, (comment) => comment.author)
     comments: Comment[];
 
