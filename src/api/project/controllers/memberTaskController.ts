@@ -76,6 +76,15 @@ const saveMemberTask = async (req: Request, res: Response) => {
         return res.status(400).json('member not found');
     }
     const mtsv = new MemberTaskService();
+    const isExist = await mtsv.getOne({
+        where: {
+            taskId: task.id,
+            memberId: member.id
+        }
+    })
+    if (isExist) {
+        return res.status(400).json('member already exists join task');
+    }
     const result = await mtsv.save({
         taskId: task.id,
         memberId: member.id
