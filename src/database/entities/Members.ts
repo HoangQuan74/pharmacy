@@ -35,7 +35,7 @@ export class Members extends CodeBase {
   project?: Projects;
 
   @OneToMany(() => TaskMember, (taskMember) => taskMember.member)
-  public taskMembers: TaskMember[];
+    taskMembers: TaskMember[];
 
   isOwner: Boolean;
 }

@@ -251,12 +251,13 @@ const saveMember = async (req: Request, res: Response) => {
       }
     });
 
-    const tokens = {
+    const userData = {
+      user: userMember,
       access_token: makeToken('access', userId),
       refresh_token: makeToken('refresh', userId),
     }
 
-    return res.status(200).json(tokens);
+    return res.status(200).json(userData);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);

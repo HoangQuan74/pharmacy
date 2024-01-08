@@ -7,6 +7,8 @@ import { makeToken } from "../../../../src/common/helper/token";
 import { hashPass } from "../../../../src/common/helper/hashPass";
 import { firebaseAdmin } from "../../../config/firebase";
 import cloudinary from "../../../config/cloudinary";
+import { MemberService } from "../../project/services/memberService";
+import { TaskStatus } from "../../../database/entities/Task";
 const multer = require('multer')
 const Joi = require("joi");
 
@@ -209,11 +211,34 @@ const changePassword = async (req: Request, res: Response) => {
   }
 };
 
+const myTasks = async (req: Request, res: Response) => {
+    const userId = req.userData.id;
+    const membersv = new MemberService();
+    const members = await membersv.getAll({
+      where: { userId: userId },
+      relations: ["taskMembers", "taskMembers.task", "taskMembers.task.project"],
+    });
+    
+    if (!members) {
+      return res.status(400).json("You have not been member of any projects");
+    }
+
+    const tasks = []
+    members.map(member => {
+      member.taskMembers.map(taskMember => {
+        if(taskMember.task.status !== TaskStatus.DONE) tasks.push(taskMember.task);
+      })
+    })
+
+  return res.status(200).json(tasks);
+};
+
 export const userController = {
   register,
   login,
   getProfile,
   updateProfile,
   upload,
-  changePassword
+  changePassword,
+  myTasks
 };
