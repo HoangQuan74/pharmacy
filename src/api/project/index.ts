@@ -46,6 +46,11 @@ router.delete(
 
 // member tasks
 router.get("/:id/tasks/:tid/member-task", authInstance.auth, memberTaskController.membertasks);
+router.get(
+  "/:id/tasks/:tid/free-members",
+  authInstance.auth,
+  memberTaskController.getFreeMembers
+);
 router.post("/:id/tasks/:tid/member-task", authInstance.auth, memberTaskController.saveMemberTask);
 router.delete(
   "/:id/tasks/:tid/member-task/:mtid",
