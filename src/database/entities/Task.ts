@@ -14,10 +14,7 @@ export enum Priority {
 export enum TaskStatus {
     NOT_STARTED = 'NOT_STARTED',
     DOING = 'DOING',
-    TESTING = 'TESTING',
-    FIXING = 'FIXING',
     DONE = 'DONE',
-    PENDING = 'PENDING',
 }
 @Entity({ name: "task" })
 export class Task extends CodeBase {

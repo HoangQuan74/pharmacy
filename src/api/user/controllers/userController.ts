@@ -6,7 +6,8 @@ import { BadRequestException, ForbiddenException, NotFoundException } from "@nes
 import { makeToken } from "../../../../src/common/helper/token";
 import { hashPass } from "../../../../src/common/helper/hashPass";
 import { firebaseAdmin } from "../../../config/firebase";
-//import * as multer from 'multer';
+import cloudinary from "../../../config/cloudinary";
+const multer = require('multer')
 const Joi = require("joi");
 
 const register = async (req: Request, res: Response) => {
@@ -131,13 +132,54 @@ const updateProfile = async (req: Request, res: Response) => {
   }
 };
 
-// const upload = async (req: Request, res: Response) => {
- 
-// };
+const upload = async (req: Request, res: Response) => {
+  try {
+    if (!req.userData.id) {
+      return res.status(401).json("Unauthorized");
+    }
+
+    const {file} = req as unknown as {file: any}
+
+    if (!file) {
+      return res.status(400).json("Please provide an image file");
+    }
+
+    if (
+      file.mimetype !== "image/png" &&
+      file.mimetype !== "image/jpg" &&
+      file.mimetype !== "image/jpeg" &&
+      file.mimetype !== "image/webp"
+    ) {
+      return res.status(400).json("File is invalid");
+    }
+    let filePath;
+    await cloudinary.uploader
+      .upload_stream(
+        {
+          folder: "project-management",
+          invalidate: true,
+        },
+        (err, result) => {
+          if (err) {
+            return res.status(500).json("File uploading failed");
+          }
+          filePath = result.secure_url;
+          return res.status(201).json({
+            message: "Upload successful",
+            filePath,
+          });
+        }
+      )
+      .end(file.buffer);
+  } catch (err) {
+    return res.status(500).json({ detail: err.message });
+  }
+};
 
 export const userController = {
   register,
   login,
   getProfile,
-  updateProfile
+  updateProfile,
+  upload
 };
