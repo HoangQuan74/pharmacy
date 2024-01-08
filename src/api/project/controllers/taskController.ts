@@ -105,7 +105,7 @@ const upsertTask = async (req: Request, res: Response) => {
           status: Joi.string()
             .valid(...Object.values(TaskStatus))
             .optional(),
-          description: Joi.string().max(500).optional(),
+          description: Joi.string().allow(null).max(500).optional(),
         });
 
         const { error, value } = schema.validate(req.body);
