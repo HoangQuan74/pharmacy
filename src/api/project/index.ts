@@ -5,6 +5,7 @@ import { taskController } from "./controllers/taskController";
 import { projectController } from "./controllers/projectController";
 import { commentController } from "./controllers/commentController";
 import { checkListController } from "./controllers/checkListController";
+import { memberTaskController } from "./controllers/memberTaskController";
 
 const authInstance = new Auth();
 const router = express.Router();
@@ -41,6 +42,15 @@ router.delete(
   "/:id/tasks/:tid",
   authInstance.auth,
   taskController.deleteTaskById
+);
+
+// member tasks
+router.get("/:id/tasks/:tid/member-task", authInstance.auth, memberTaskController.membertasks);
+router.post("/:id/tasks/:tid/member-task", authInstance.auth, memberTaskController.saveMemberTask);
+router.delete(
+  "/:id/tasks/:tid/member-task/:mtid",
+  authInstance.auth,
+  memberTaskController.deleteMemberTask
 );
 
 //comment
