@@ -6,6 +6,8 @@ import { ProjectService } from "../services/projectService";
 import { firebaseAdmin } from "../../../config/firebase";
 import SendGrid from "../../../config/sendgrid";
 import { MemberRoles } from "../../../common/constants/userConstant";
+import * as jwt from "jsonwebtoken";
+import jwtObj from "../../../config/jwt";
 
 const members = async (req: Request, res: Response) => {
   try {
@@ -107,7 +109,7 @@ const deleteMember = async (req: Request, res: Response) => {
   }
 };
 
-const saveMember = async (req: Request, res: Response) => {
+const sendInvitation = async (req: Request, res: Response) => {
   try {
     const id = req.userData.id;
     const projectId = parseInt(req.params.id);
@@ -121,8 +123,8 @@ const saveMember = async (req: Request, res: Response) => {
       return res.status(400).json(error);
     }
     const usersv = new UserService();
-    const existingUser = await usersv.getOne({where: {email: value.email}})
-    if(!existingUser) return res.status(400).json("Email is not registered");
+    const existingUser = await usersv.getOne({ where: { email: value.email } });
+    if (!existingUser) return res.status(400).json("Email is not registered");
     const psv = new ProjectService();
     const membersv = new MemberService();
     const project = await psv.getOne({
@@ -153,11 +155,14 @@ const saveMember = async (req: Request, res: Response) => {
       return res.status(400).json("You are not an admin of this project");
     }
 
-    const us = new UserService();
-    const userMember = await us.getOne({ where: { id: value.userId } });
-    if (!userMember) {
-      return res.status(400).json("user not found");
-    }
+    const token = jwt.sign(
+      {
+        userId: id,
+        projectId: projectId,
+      },
+      jwtObj.secret
+    );
+    const acceptUrl = `https://localhost:7294/accept-invitation?token=${token}`;
 
     await SendGrid.send({
       to: req.body.email,
@@ -166,37 +171,96 @@ const saveMember = async (req: Request, res: Response) => {
       dynamicTemplateData: {
         adminName: member.user.fullName,
         projectName: project.name,
+        link: acceptUrl,
       },
     });
+
+    return res.status(200).json();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
+
+const saveMember = async (req: Request, res: Response) => {
+  try {
+    const schema = Joi.object({
+      token: Joi.string().required(),
+    });
+
+    const { error, value } = schema.validate(req.body);
+    if (error) {
+      return res.status(400).json(error);
+    }
+
+    const token = value.token;
+    const result = jwt.verify(token, jwtObj.secret);
+    const { projectId, userId } = result as unknown as {
+      projectId: number;
+      userId: number;
+    };
+    const projectsv = new ProjectService();
+    const membersv = new MemberService();
+    const project = await projectsv.getOne({
+      where: {
+        id: projectId,
+      },
+      relations: ["members"],
+      select: {
+        members: {
+          userId: true,
+        },
+      },
+    });
+    if (!project) {
+      return res.status(400).json("Project not found");
+    }
+    const member = await membersv.getOne({
+      where: {
+        userId: userId,
+        projectId: projectId,
+      },
+    });
+    if (member) {
+      return res.status(400).json("You have already been member of this project");
+    }
+
+    const us = new UserService();
+    const userMember = await us.getOne({ where: { id: userId } });
+    if (!userMember) {
+      return res.status(400).json("user not found");
+    }
+
     const _member = membersv.create({
       role: MemberRoles.MEMBER,
       userId: userMember.id,
       projectId: projectId,
     });
-    const result = await membersv.save(_member);
+    const memberDoc = await membersv.save(_member);
 
     const roomCollection = firebaseAdmin.firestore().collection("rooms");
 
     project.members.map((member) => {
-      if (member.userId !== result.id) {
+      if (member.userId !== memberDoc.id) {
         roomCollection.add({
           ProjectId: projectId.toString(),
-          CreatedAt: result.createdAt,
-          Members: [member.userId.toString(), result.id.toString()],
+          CreatedAt: memberDoc.createdAt,
+          Members: [member.userId.toString(), memberDoc.id.toString()],
         });
       }
     });
 
-    return res.status(200).json(result);
+    return res.status(200).json(memberDoc);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
   }
-}; 
+};
 
 export const memberController = {
   members,
   updateMember,
   deleteMember,
   saveMember,
+  sendInvitation,
 };

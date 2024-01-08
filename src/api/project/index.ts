@@ -20,7 +20,7 @@ router.delete("/:id", authInstance.auth, projectController.deleteProject);
 
 // member of project
 router.get("/:id/members", authInstance.auth, memberController.members);
-router.post("/:id/members", authInstance.auth, memberController.saveMember);
+router.post("/accept-invitation", authInstance.auth, memberController.saveMember);
 router.put(
   "/:id/members/:mid",
   authInstance.auth,
@@ -31,6 +31,7 @@ router.delete(
   authInstance.auth,
   memberController.deleteMember
 );
+router.post("/:id/invite", authInstance.auth, memberController.sendInvitation);
 
 // task
 router.post("/:id/tasks", authInstance.auth, taskController.upsertTask); // api is update (if body have id) or insert
