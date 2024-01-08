@@ -12,5 +12,6 @@ router.post('/login', userController.login);
 router.get("/profile", authInstance.auth, userController.getProfile);
 router.put("/update-profile", authInstance.auth, userController.updateProfile);
 router.post("/upload", authInstance.auth, upload.single("file"), userController.upload);
+router.put("/change-password", authInstance.auth, userController.changePassword);
 
 module.exports = router;

@@ -8,6 +8,7 @@ import SendGrid from "../../../config/sendgrid";
 import { MemberRoles } from "../../../common/constants/userConstant";
 import * as jwt from "jsonwebtoken";
 import jwtObj from "../../../config/jwt";
+import { makeToken } from "../../../common/helper/token";
 
 const members = async (req: Request, res: Response) => {
   try {
@@ -250,7 +251,12 @@ const saveMember = async (req: Request, res: Response) => {
       }
     });
 
-    return res.status(200).json(memberDoc);
+    const tokens = {
+      access_token: makeToken('access', userId),
+      refresh_token: makeToken('refresh', userId),
+    }
+
+    return res.status(200).json(tokens);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
