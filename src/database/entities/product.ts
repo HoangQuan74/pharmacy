@@ -29,11 +29,11 @@ export class Product extends CodeBase {
     @Column({ length: 500, nullable: true })
     storageRequirement: string;             // yêu cầu bảo quản
 
-    @Column({ type: 'decimal', precision: 20, scale: 2 })
+    @Column()
     price: number;
 
     @Column()
-    quanlity: number
+    quanlity: number;
 
     @Column({ type: 'enum', enum: UnitProduct, default: UnitProduct.EACH })
     unit: UnitProduct;

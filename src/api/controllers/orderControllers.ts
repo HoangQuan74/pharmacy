@@ -7,6 +7,7 @@ import { BusinessPartnerService } from "../services/partnerService";
 import { OrderDetailService } from "../services/detailOrderService";
 import { TypePartner } from "../../database/entities/BusinessPartner";
 import { typeUser } from "../../database/entities/Users";
+import { ProductService } from "../services/productService";
 
 const orderSelles = async (req: Request, res: Response) => {
     const orderSv = new OrderService();
@@ -59,6 +60,7 @@ const saveOrderBuy = async (req: Request, res: Response) => {
     const orderSv = new OrderService();
     const detailOrderSv = new OrderDetailService();
     const bsv = new BusinessPartnerService();
+    const psv = new ProductService();
     try {
         const schema = Joi.object({
             partnerId: Joi.number().required(),
@@ -89,11 +91,12 @@ const saveOrderBuy = async (req: Request, res: Response) => {
         const orderdetail = value.orderDetails.map((product) => {
             return detailOrderSv.create({
                 ...product,
-                price: product.quanlity * product.unitPrice,
+                price: product.quantity * product.unitPrice,
                 orderId: order.id,
             })
         })
-        order.orderDetails = await detailOrderSv.save(orderdetail)
+        order.orderDetails = await detailOrderSv.save(orderdetail);
+        // const productId = order.orderDetails.map((product) => product.)
         return res.status(200).json(order);
     } catch (error) {
         console.log(error);

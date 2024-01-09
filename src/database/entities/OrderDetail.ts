@@ -16,10 +16,10 @@ export class OrderDetail extends CodeBase {
     @Column({ default: 1 })
     quantity: number;
 
-    @Column({ type: 'decimal', precision: 20, scale: 2 })
+    @Column()
     unitPrice: number;
 
-    @Column({ type: 'decimal', precision: 20, scale: 2 })
+    @Column()
     price: number;
 
     // relation
