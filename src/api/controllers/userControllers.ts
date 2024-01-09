@@ -14,7 +14,7 @@ const login = async (req: Request, res: Response) => {
         });
 
         const { error, value } = schema.validate(req.body);
-        if (error) return res.status(400).json(error.message);
+        if (error) return res.status(400).json(error.details[0].message);
 
         const { email, password } = value;
         const us = new UserService();
@@ -115,7 +115,7 @@ const saveUser = async (req: Request, res: Response) => {
 
     const { error, value } = schema.validate(req.body);
     if (error) {
-        return res.status(400).json(error);
+        return res.status(400).json(error.details[0].message);
     }
 
     try {
@@ -171,7 +171,7 @@ const updateUser = async (req: Request, res: Response) => {
 
         const { error, value } = schema.validate(req.body);
         if (error) {
-            return res.status(400).json(error);
+            return res.status(400).json(error.details[0].message);
         }
         if (employeeId !== userId) {
             if (!admin) {
