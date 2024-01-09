@@ -91,7 +91,8 @@ const getProfile = async (req: Request, res: Response) => {
 
     const { password, ...user } = await userService.getOne({where: {id: userId}}); 
 
-    return res.status(200).json(user);
+    const result = {...user, dob: user.dob?.toISOString()}
+    return res.status(200).json(result);
   } catch (e) {
     console.log(e);
     return res.status(500).json({ detail: e.message });

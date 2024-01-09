@@ -59,6 +59,14 @@ const getFreeMembers = async (req: Request, res: Response) => {
     where: {
       projectId: projectId,
     },
+    relations: ["user"],
+    select: {
+      user: {
+        email: true,
+        fullName: true,
+        avatar: true
+      }
+    }
   });
 
   const taskMemberIds = task.taskMembers.map(taskMember => taskMember.member.id);

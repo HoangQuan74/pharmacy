@@ -67,6 +67,7 @@ const upsertCheckList = async (req: Request, res: Response) => {
     const schema = Joi.object({
         id: Joi.number().optional(),
         name: Joi.string().required(),
+        isDone: Joi.boolean().required(),
     })
     const { error, value } = schema.validate(req.body);
     if (error) {

@@ -6,20 +6,23 @@ import { Users } from "./Users";
 
 @Entity()
 export class CheckList extends CodeBase {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ length: 100 })
-    name: string;
+  @Column({ length: 100 })
+  name: string;
 
-    @Column()
-    taskId: number;
+  @Column()
+  taskId: number;
 
-    // relation
-    @ManyToOne(() => Task, (task) => task.id)
-    @JoinColumn({
-        name: 'taskId',
-        referencedColumnName: 'id',
-    })
-    task: Task;
+  // relation
+  @ManyToOne(() => Task, (task) => task.id)
+  @JoinColumn({
+    name: "taskId",
+    referencedColumnName: "id",
+  })
+  task: Task;
+
+  @Column({default: false})
+  isDone: boolean;
 }
