@@ -1,6 +1,7 @@
 import * as express from 'express';
+import Auth from '../common/helper/auth';
 const router = express.Router();
 
-// router
+const authInstance = new Auth();
 
 module.exports = router;

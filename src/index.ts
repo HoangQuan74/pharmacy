@@ -48,8 +48,7 @@ app.use(
 );
 
 // api
-app.use('/user', require('./api/user'));
-app.use('/project', require('./api/project'));
+app.use('/', require('./api'));
 
 
 const httpServer = http.createServer(app);
@@ -64,11 +63,8 @@ global.io = io;
 AppDataSource.initialize()
     .then(() => {
         httpServer.listen(PORT, async function () {
-            // const cs = new ChatService();
-            // cs.deleteAllSocketData();
             console.log('Connected ' + PORT + ' port!');
         });
 
-        // io = require('./chat/io');
     })
     .catch((error) => console.log(error));

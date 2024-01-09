@@ -1,12 +1,17 @@
 import { Column, PrimaryGeneratedColumn, Entity, OneToMany } from "typeorm";
 import { CodeBase } from "./CodeBase";
-import { Gender, defaultAvatar } from "../../common/constants/userConstant";
-import { Members } from "./Members";
-import { ChannelMember } from "./ChannelMemner";
-import { ChatMessage } from "./ChatMessage";
-import { Projects } from "./Projects";
-import { CheckList } from "./CheckList";
-import { Comment } from "./Comment";
+import { defaultAvatar } from "../../common/constants/userConstant";
+
+export enum Gender {
+    "MALE" = "MALE",
+    "FEMALE" = "FEMALE",
+    "OTHER" = "OTHER",
+}
+
+export enum typeUser {
+    "EMPLOYEE" = "EMPLOYEE",
+    "ADMIN" = "ADMIN",
+}
 @Entity({ name: 'users' })
 export class Users extends CodeBase {
     @PrimaryGeneratedColumn()
@@ -15,7 +20,7 @@ export class Users extends CodeBase {
     @Column({ length: 50 })
     fullName: string;
 
-    @Column({ length: 500, default: defaultAvatar})
+    @Column({ length: 500, default: defaultAvatar })
     avatar: string;
 
     @Column({ length: 50 })
@@ -24,8 +29,8 @@ export class Users extends CodeBase {
     @Column({ length: 65 })
     password: string;
 
-    @Column({ nullable: true })
-    dob: Date;
+    @Column({ type: 'enum', enum: typeUser, default: typeUser.EMPLOYEE })
+    typeUser: typeUser;
 
     @Column({ type: 'enum', enum: Gender, default: Gender.MALE })
     gender: Gender;
@@ -33,19 +38,9 @@ export class Users extends CodeBase {
     @Column({ length: 20, nullable: true })
     phone: string;
 
+    @Column({ length: 20, nullable: true })
+    cccd: string;
+    
     // relation
-    @OneToMany(() => ChannelMember, (channelMember) => channelMember.user)
-    channelMembers?: ChannelMember[];
 
-    @OneToMany(() => ChatMessage, (chatMessage) => chatMessage.user)
-    chatMessage?: ChatMessage[];
-
-    @OneToMany(() => Projects, (project) => project.owner)
-    projects: Projects[];
-
-    @OneToMany(() => Comment, (comment) => comment.author)
-    comments: Comment[];
-
-    @OneToMany(() => Members, (member) => member.user)
-    members: Members[];
 }
