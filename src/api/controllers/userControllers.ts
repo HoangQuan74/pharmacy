@@ -102,7 +102,7 @@ const saveUser = async (req: Request, res: Response) => {
         return res.status(400).json('You not admin');
     }
     const schema = Joi.object({
-        fullName: Joi.string().required(),
+        fullName: Joi.string().max(100).min(6).required(),
         email: Joi.string().email().required(),
         password: Joi.string().min(6).default('123456'),
         gender: Joi.string().valid(...Object.values(Gender)),
@@ -119,6 +119,10 @@ const saveUser = async (req: Request, res: Response) => {
 
     try {
         const { password, ...user } = value;
+        const isExistsEmail = await us.isExistsEmail(value.email);
+        if (isExistsEmail) {
+            return res.status(400).json('email already exist');
+        }
         const employee = us.create({
             ...user,
             password: hashPass(password)
