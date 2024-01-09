@@ -6,6 +6,7 @@ import { StatusPaid, TypeOrder } from "../../database/entities/Order";
 import { BusinessPartnerService } from "../services/partnerService";
 import { OrderDetailService } from "../services/detailOrderService";
 import { TypePartner } from "../../database/entities/BusinessPartner";
+import { typeUser } from "../../database/entities/Users";
 
 const orderSelles = async (req: Request, res: Response) => {
     const orderSv = new OrderService();
@@ -147,10 +148,47 @@ const saveOrderSell = async (req: Request, res: Response) => {
         return res.status(500).json(error);
     }
 }
+
+const deleteOrder = async (req: Request, res: Response) => {
+    const orderId = parseInt(req.params.id);
+    const userId = req.userData.id;
+    const us = new UserService();
+    const osv = new OrderService();
+    try {
+        const admin = await us.getOne({
+            where: {
+                id: userId,
+                typeUser: typeUser.ADMIN,
+            }
+        });
+        if (!admin) {
+            return res.status(400).json('Not allowed to delete');
+        }
+        const order = await osv.getOne({
+            where: {
+                id: orderId
+            },
+            relations: [
+                'orderDetails',
+                'payments'
+            ]
+        });
+        if (!order) {
+            return res.status(400).json('Order not found');
+        }
+        await osv.softRemove([order]);
+        return res.status(200).json(true);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+}
 export const orderController = {
     orderSelles,
     orderBuys,
 
     saveOrderBuy,
     saveOrderSell,
+
+    deleteOrder,
 }

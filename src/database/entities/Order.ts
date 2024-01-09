@@ -51,9 +51,13 @@ export class Order extends CodeBase {
     })
     partner: BusinessPartner;
 
-    @OneToMany(() => Payment, (payment) => payment.order)
+    @OneToMany(() => Payment, (payment) => payment.order, {
+        cascade: true,
+    })
     payments: Payment[];
 
-    @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order)
+    @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order, {
+        cascade: true,
+    })
     orderDetails: OrderDetail[];
 }

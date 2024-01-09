@@ -37,4 +37,7 @@ router.get('/order-buy', authInstance.auth, orderController.orderBuys);
 
 router.post('/order-sell', authInstance.auth, orderController.saveOrderSell);
 router.post('/order-buy', authInstance.auth, orderController.saveOrderBuy);
+
+router.delete('/order/:id', authInstance.auth, orderController.deleteOrder);
+
 module.exports = router;
