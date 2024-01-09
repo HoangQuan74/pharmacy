@@ -1,6 +1,7 @@
 import { Column, PrimaryGeneratedColumn, Entity, OneToMany } from "typeorm";
 import { CodeBase } from "./CodeBase";
 import { defaultAvatar } from "../../common/constants/userConstant";
+import { Order } from "./Order";
 
 export enum TypePartner {
     BUSINESS = "BUSINESS",
@@ -17,6 +18,9 @@ export class BusinessPartner extends CodeBase {
     @Column({ nullable: true })
     email: string;
 
+    @Column({ length: 500, default: defaultAvatar })
+    avatar: string;
+
     @Column({ type: 'enum', enum: TypePartner, default: TypePartner.CLIENT })
     typePartner: TypePartner;
 
@@ -27,5 +31,6 @@ export class BusinessPartner extends CodeBase {
     address: string;
     
     // relation
-
+    @OneToMany(() => Order, (order) => order.partner)
+    orders: Order[];
 }

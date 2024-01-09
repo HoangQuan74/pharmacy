@@ -18,4 +18,9 @@ export const AppDataSource = new DataSource({
     ],
     migrations: [__dirname + '/database/migrations/*{.ts,.js}'],
     subscribers: [],
+    ssl: {
+        minVersion: 'TLSv1.2',
+        rejectUnauthorized: true
+    },
+    connectTimeout: 20000
 })
