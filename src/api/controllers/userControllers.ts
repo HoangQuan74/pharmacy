@@ -78,6 +78,10 @@ const getProfile = async (req: Request, res: Response) => {
 
 const users = async (req: Request, res: Response) => {
     const userId = req.userData.id;
+    const us = new UserService();
+
+    const data = await us.getAll();
+    return res.status(200).json(data);
 }
 
 export const userControllers = {
