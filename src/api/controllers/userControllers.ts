@@ -4,6 +4,7 @@ import * as Joi from 'joi';
 import { UserService } from "../services/userServices";
 import { makeToken } from "../../common/helper/token";
 import { Gender, typeUser } from "../../database/entities/Users";
+import { Not } from "typeorm";
 
 const login = async (req: Request, res: Response) => {
     try {
@@ -109,7 +110,7 @@ const saveUser = async (req: Request, res: Response) => {
         phone: Joi.string()
             .pattern(/^[0-9]{10}$/)
             .required(),
-        salary: Joi.number().max(100000000).min(0).allow(''),
+        salary: Joi.number().max(100000000).min(0).optional(),
     })
 
     const { error, value } = schema.validate(req.body);
@@ -127,6 +128,77 @@ const saveUser = async (req: Request, res: Response) => {
             ...user,
             password: hashPass(password)
         });
+        const result = await us.save(employee);
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+}
+
+
+const updateUser = async (req: Request, res: Response) => {
+    const us = new UserService();
+    const employeeId = parseInt(req.params.id);
+    const userId = req.userData.id;
+
+    try {
+        const employee = await us.getOne({
+            where: {
+                id: employeeId,
+            }
+        })
+        if (!employee) {
+            return res.status(400).json('Employee not found');
+        }
+        const admin = await us.getOne({
+            where: {
+                id: userId,
+                typeUser: typeUser.ADMIN,
+            }
+        })
+
+        const schema = Joi.object({
+            fullName: Joi.string().max(100).min(6).optional(),
+            email: Joi.string().email().optional(),
+            password: Joi.string().min(6).optional(),
+            gender: Joi.string().valid(...Object.values(Gender)),
+            phone: Joi.string()
+                .pattern(/^[0-9]{10}$/)
+                .optional(),
+            salary: Joi.number().max(100000000).min(0).optional(),
+        })
+
+        const { error, value } = schema.validate(req.body);
+        if (error) {
+            return res.status(400).json(error);
+        }
+        if (employeeId !== userId) {
+            if (!admin) {
+                return res.status(400).json('You not allowed to update data');
+            }
+        }
+        if (!admin) {
+            delete value.salary;
+        }
+
+        const { password, ...user } = value;
+        const isExistsEmail = await us.getOne({
+            where: {
+                id: Not(employeeId),
+                email: value.email,
+            }
+        });
+        if (isExistsEmail) {
+            return res.status(400).json('email already exist');
+        }
+        employee.password = password ? hashPass(password) : employee.password;
+        employee.fullName = user.fullName ?? employee.fullName;
+        employee.email = user.email ?? employee.email;
+        employee.phone = user.phone ?? employee.phone;
+        employee.salary = user.salary ?? employee.salary;
+        employee.gender = user.gender ?? employee.gender;
+
         const result = await us.save(employee);
         return res.status(200).json(result);
     } catch (error) {
@@ -173,4 +245,5 @@ export const userControllers = {
     getProfile,
     saveUser,
     deleteUser,
+    updateUser,
 };
