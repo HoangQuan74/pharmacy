@@ -135,10 +135,42 @@ const saveUser = async (req: Request, res: Response) => {
     }
 }
 
+const deleteUser = async (req: Request, res: Response) => {
+    const us = new UserService();
+    const employeeId = parseInt(req.params.id);
+    const userId = req.userData.id;
+    try {
+        const admin = await us.getOne({
+            where: {
+                id: userId,
+                typeUser: typeUser.ADMIN,
+            }
+        })
+        if (!admin) {
+            return res.status(400).json('You not admin');
+        }
+        const employee = await us.getOne({
+            where: {
+                id: employeeId,
+                typeUser: typeUser.EMPLOYEE,
+            }
+        })
+        if (!employee) {
+            return res.status(400).json('Employee not found');
+        }
+        const result = await us.softRemove([employee]);
+        return res.status(200).json(!!result);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+}
+
 export const userControllers = {
     login,
     changePassword,
     users,
     getProfile,
     saveUser,
+    deleteUser,
 };

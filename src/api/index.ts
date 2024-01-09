@@ -9,5 +9,7 @@ router.post('/users/login', userControllers.login);
 router.get('/users/profile', authInstance.auth, userControllers.getProfile);
 router.get('/users', authInstance.auth, userControllers.users);
 router.post('/users', authInstance.auth, userControllers.saveUser)
+router.delete('/users/:id', authInstance.auth, userControllers.deleteUser)
+
 
 module.exports = router;
