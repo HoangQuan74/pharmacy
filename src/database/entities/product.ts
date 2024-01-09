@@ -1,6 +1,6 @@
 import { Column, PrimaryGeneratedColumn, Entity, OneToMany, ManyToMany, ManyToOne, JoinColumn } from "typeorm";
 import { CodeBase } from "./CodeBase";
-import { ProductCategory } from "./productCategory";
+import { ProductCategory } from "./ProductCategory";
 
 @Entity({ name: 'product' })
 export class Product extends CodeBase {
