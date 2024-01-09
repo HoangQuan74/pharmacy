@@ -253,6 +253,7 @@ const saveMember = async (req: Request, res: Response) => {
 
     const userData = {
       user: userMember,
+      projectId: projectId,
       access_token: makeToken('access', userId),
       refresh_token: makeToken('refresh', userId),
     }
