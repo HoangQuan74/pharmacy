@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import * as Joi from 'joi';
-import { UserService } from "../services/userServices";
 import { ProductCategoryService } from "../services/productCategoryService";
 import { ProductService } from "../services/productService";
 import { UnitProduct } from "../../database/entities/Product";

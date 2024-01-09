@@ -3,6 +3,7 @@ import Auth from '../common/helper/auth';
 import { userControllers } from './controllers/userControllers';
 import { businessPartnerController } from './controllers/partnerController';
 import { productController } from './controllers/productControllers';
+import { orderController } from './controllers/orderControllers';
 const router = express.Router();
 
 const authInstance = new Auth();
@@ -28,5 +29,10 @@ router.get('/category', productController.productCategories);
 router.get('/product', productController.products);
 router.post('/product', authInstance.auth, productController.saveProduct);
 router.delete('/product/:id', authInstance.auth, productController.deleteProduct);
+
+
+// order
+router.get('/order-sell', authInstance.auth, orderController.orderSelles)
+router.get('/order-buy', authInstance.auth, orderController.orderBuys)
 
 module.exports = router;
