@@ -25,5 +25,6 @@ router.delete('/partner/:id', authInstance.auth, businessPartnerController.delet
 router.get('/category', productController.productCategories);
 
 // product
+router.get('/product', productController.products);
 
 module.exports = router;
