@@ -26,5 +26,7 @@ router.get('/category', productController.productCategories);
 
 // product
 router.get('/product', productController.products);
+router.post('/product', authInstance.auth, productController.saveProduct);
+router.delete('/product/:id', authInstance.auth, productController.deleteProduct);
 
 module.exports = router;

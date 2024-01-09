@@ -2,6 +2,13 @@ import { Column, PrimaryGeneratedColumn, Entity, OneToMany, ManyToMany, ManyToOn
 import { CodeBase } from "./CodeBase";
 import { ProductCategory } from "./ProductCategory";
 
+export enum UnitProduct {
+    BOX = 'BOX',
+    EACH = 'EACH',
+    PACKAGE = 'PACKAGE',
+    KILOGRAM = 'KILOGRAM',
+    GRAM = 'GRAM',
+}
 @Entity({ name: 'product' })
 export class Product extends CodeBase {
     @PrimaryGeneratedColumn()
@@ -28,6 +35,8 @@ export class Product extends CodeBase {
     @Column()
     quanlity: number
 
+    @Column({ type: 'enum', enum: UnitProduct, default: UnitProduct.EACH })
+    unit: UnitProduct;
     // relation
     @ManyToOne(() => ProductCategory, (productCategory) => productCategory.id)
     @JoinColumn({
