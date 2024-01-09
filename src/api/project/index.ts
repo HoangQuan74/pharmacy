@@ -21,7 +21,7 @@ router.delete("/:id", authInstance.auth, projectController.deleteProject);
 
 // member of project
 router.get("/:id/members", authInstance.auth, memberController.members);
-router.post("/accept-invitation", authInstance.auth, memberController.saveMember);
+router.post("/accept-invitation", memberController.saveMember);
 router.put(
   "/:id/members/:mid",
   authInstance.auth,
