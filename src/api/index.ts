@@ -8,5 +8,6 @@ const authInstance = new Auth();
 router.post('/users/login', userControllers.login);
 router.get('/users/profile', authInstance.auth, userControllers.getProfile);
 router.get('/users', authInstance.auth, userControllers.users);
+router.post('/users', authInstance.auth, userControllers.saveUser)
 
 module.exports = router;

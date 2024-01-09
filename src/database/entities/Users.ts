@@ -4,14 +4,14 @@ import { defaultAvatar } from "../../common/constants/userConstant";
 import { Order } from "./Order";
 
 export enum Gender {
-    "MALE" = "MALE",
-    "FEMALE" = "FEMALE",
-    "OTHER" = "OTHER",
+    MALE = "MALE",
+    FEMALE = "FEMALE",
+    OTHER = "OTHER",
 }
 
 export enum typeUser {
-    "EMPLOYEE" = "EMPLOYEE",
-    "ADMIN" = "ADMIN",
+    EMPLOYEE = "EMPLOYEE",
+    ADMIN = "ADMIN",
 }
 @Entity({ name: 'users' })
 export class Users extends CodeBase {
@@ -38,6 +38,9 @@ export class Users extends CodeBase {
 
     @Column({ length: 20, nullable: true })
     phone: string;
+
+    @Column({ type: 'decimal', precision: 20, scale: 2, default: 10000000 })
+    salary: number;
 
     @Column({ length: 20, nullable: true })
     cccd: string;
