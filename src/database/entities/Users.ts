@@ -1,6 +1,7 @@
 import { Column, PrimaryGeneratedColumn, Entity, OneToMany } from "typeorm";
 import { CodeBase } from "./CodeBase";
 import { defaultAvatar } from "../../common/constants/userConstant";
+import { Exclude } from "class-transformer";
 
 export enum Gender {
     "MALE" = "MALE",
@@ -26,7 +27,7 @@ export class Users extends CodeBase {
     @Column({ length: 50 })
     email: string;
 
-    @Column({ length: 65 })
+    @Column({ length: 65, select: false })
     password: string;
 
     @Column({ type: 'enum', enum: typeUser, default: typeUser.EMPLOYEE })
@@ -40,7 +41,7 @@ export class Users extends CodeBase {
 
     @Column({ length: 20, nullable: true })
     cccd: string;
-    
+
     // relation
 
 }
