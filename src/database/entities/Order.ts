@@ -30,7 +30,7 @@ export class Order extends CodeBase {
     @Column({ type: 'enum', enum: TypeOrder, default: TypeOrder.SELL })
     typeOrder: TypeOrder;
 
-    @Column({ type: 'decimal', precision: 20, scale: 2 })
+    @Column({ type: 'decimal', precision: 20, scale: 2, nullable: true })
     totalAmount: number;
 
     @Column({ type: 'enum', enum: StatusPaid, default: StatusPaid.NOT_PAID })

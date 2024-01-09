@@ -32,7 +32,9 @@ router.delete('/product/:id', authInstance.auth, productController.deleteProduct
 
 
 // order
-router.get('/order-sell', authInstance.auth, orderController.orderSelles)
-router.get('/order-buy', authInstance.auth, orderController.orderBuys)
+router.get('/order-sell', authInstance.auth, orderController.orderSelles);
+router.get('/order-buy', authInstance.auth, orderController.orderBuys);
 
+router.post('/order-sell', authInstance.auth, orderController.saveOrderSell);
+router.post('/order-buy', authInstance.auth, orderController.saveOrderBuy);
 module.exports = router;

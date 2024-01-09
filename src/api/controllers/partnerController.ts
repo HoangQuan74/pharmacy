@@ -9,6 +9,7 @@ const businessPartners = async (req: Request, res: Response) => {
         const bs = new BusinessPartnerService();
         const schema = Joi.object({
             searchText: Joi.string().optional(),
+            typePartner: Joi.string().valid(...Object.values(TypePartner)).optional(),
         })
         const { error, value } = schema.validate(req.query);
         if (error) {
