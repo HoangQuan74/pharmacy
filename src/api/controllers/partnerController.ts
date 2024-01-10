@@ -15,7 +15,7 @@ const businessPartners = async (req: Request, res: Response) => {
         if (error) {
             return res.status(400).json(error.details[0].message);
         }
-        const data = await bs.businessPartners(value.searchText);
+        const data = await bs.businessPartners(value.searchText, value.typePartner);
         return res.status(200).json(data);
     } catch (error) {
         console.log(error);

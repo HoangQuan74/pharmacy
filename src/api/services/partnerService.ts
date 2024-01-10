@@ -1,6 +1,6 @@
 import { AppDataSource } from "../../../src/ormconfig";
 import { Brackets, DeepPartial, FindOneOptions, FindOptionsWhere } from "typeorm";
-import { BusinessPartner } from "../../database/entities/BusinessPartner";
+import { BusinessPartner, TypePartner } from "../../database/entities/BusinessPartner";
 
 export class BusinessPartnerService {
     private businessPartnerRes = AppDataSource.getRepository(BusinessPartner);
@@ -33,7 +33,7 @@ export class BusinessPartnerService {
         return !!result.affected;
     }
 
-    async businessPartners(searchText: string = null) {
+    async businessPartners(searchText: string = null, typePartner: TypePartner) {
         const qb = this.businessPartnerRes
             .createQueryBuilder('partner')
         if (searchText) {
@@ -42,6 +42,9 @@ export class BusinessPartnerService {
                     .orWhere('partner.fullName LIKE :searchText')
                     .orWhere('partner.typePartner LIKE :searchText')
             }))).setParameters({ searchText: `%${searchText}%` })
+        }
+        if (typePartner) {
+            qb.andWhere('partner.typePartner = :typePartner', { typePartner });
         }
         const data = await qb.orderBy('partner.createdAt', 'DESC').getMany();
         return data;
