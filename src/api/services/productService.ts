@@ -46,7 +46,7 @@ export class ProductService {
         if (categoryId) {
             qb.andWhere('category.id = :categoryId', { categoryId })
         }
-        const data = await qb.getMany();
+        const data = await qb.orderBy('product.createdAt', 'DESC').getMany();
         return data;
     }
 }
