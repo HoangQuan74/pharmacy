@@ -4,7 +4,7 @@ import * as Joi from 'joi';
 import { UserService } from "../services/userServices";
 import { makeToken } from "../../common/helper/token";
 import { Gender, typeUser } from "../../database/entities/Users";
-import { Not } from "typeorm";
+import { ILike, Like, Not } from "typeorm";
 
 const login = async (req: Request, res: Response) => {
     try {
@@ -80,8 +80,19 @@ const getProfile = async (req: Request, res: Response) => {
 
 const users = async (req: Request, res: Response) => {
     const us = new UserService();
+    const schema = Joi.object({
+        searchText: Joi.string().optional().allow(''),
+    })
+    const { error, value } = schema.validate(req.query);
+    if (error) {
+        return res.status(400).json(error.details[0].message);
+    }
     try {
-        const data = await us.getAll();
+        const data = await us.getAll({
+            where: {
+                fullName: ILike(`%${value.searchText}%`)
+            }
+        });
         return res.status(200).json(data);
     } catch (error) {
         console.log(error);
