@@ -33,7 +33,7 @@ export class BusinessPartnerService {
         return !!result.affected;
     }
 
-    async businessPartners(searchText: string = null, typePartner: TypePartner) {
+    async businessPartners(searchText: string = null, typePartner: TypePartner = null) {
         const qb = this.businessPartnerRes
             .createQueryBuilder('partner')
         if (searchText) {
