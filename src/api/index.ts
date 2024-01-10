@@ -4,6 +4,7 @@ import { userControllers } from './controllers/userControllers';
 import { businessPartnerController } from './controllers/partnerController';
 import { productController } from './controllers/productControllers';
 import { orderController } from './controllers/orderControllers';
+import { reportControllers } from './controllers/reportControllers';
 const router = express.Router();
 
 const authInstance = new Auth();
@@ -39,5 +40,8 @@ router.post('/order-sell', authInstance.auth, orderController.saveOrderSell);
 router.post('/order-buy', authInstance.auth, orderController.saveOrderBuy);
 
 router.delete('/order/:id', authInstance.auth, orderController.deleteOrder);
+
+// report
+router.get('/report', authInstance.auth, reportControllers.report)
 
 module.exports = router;

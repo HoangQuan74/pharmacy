@@ -61,4 +61,19 @@ export class OrderService {
         }
         return qb.getMany();
     }
+
+    async getTotalAmount(typeOrder: TypeOrder) {
+        const currentDate = new Date();
+        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+        const data = await this.orderRes
+            .createQueryBuilder('order')
+            .select('SUM(order.totalAmount)', 'totalAmount')
+            .where('order.typeOrder = :typeOrder', { typeOrder })
+            .andWhere('order.createdAt >= :startOfMonth', { startOfMonth })
+            .andWhere('order.createdAt <= :endOfMonth', { endOfMonth })
+            .getRawOne();
+        return data.totalAmount;
+    }
 }

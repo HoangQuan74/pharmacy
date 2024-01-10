@@ -61,4 +61,12 @@ export class UserService {
       throw e;
     }
   }
+
+  async getToltalSalaryCurrentMonth() {
+    const data = await this.userRepository
+      .createQueryBuilder('user')
+      .select('SUM(user.salary)', 'totalSalary')
+      .getRawOne();
+    return data.totalSalary;
+  }
 }
