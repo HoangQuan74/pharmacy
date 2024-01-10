@@ -59,7 +59,7 @@ export class OrderService {
         if (statusPaid) {
             qb.andWhere('order.status = :statusPaid', { statusPaid });
         }
-        return qb.getMany();
+        return qb.orderBy('order.createdAt', 'DESC').getMany();
     }
 
     async getTotalAmount(typeOrder: TypeOrder) {
