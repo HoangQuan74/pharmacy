@@ -43,7 +43,7 @@ export class BusinessPartnerService {
                     .orWhere('partner.typePartner LIKE :searchText')
             }))).setParameters({ searchText: `%${searchText}%` })
         }
-        const data = await qb.getMany();
+        const data = await qb.orderBy('partner.createdAt', 'DESC').getMany();
         return data;
     }
 }
