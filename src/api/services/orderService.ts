@@ -73,6 +73,7 @@ export class OrderService {
             .where('order.typeOrder = :typeOrder', { typeOrder })
             .andWhere('order.createdAt >= :startOfMonth', { startOfMonth })
             .andWhere('order.createdAt <= :endOfMonth', { endOfMonth })
+            .andWhere('order.status = :status', { status: StatusPaid.PAID })
             .getRawOne();
         return data.totalAmount;
     }
