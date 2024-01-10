@@ -8,6 +8,7 @@ import { OrderDetailService } from "../services/detailOrderService";
 import { TypePartner } from "../../database/entities/BusinessPartner";
 import { typeUser } from "../../database/entities/Users";
 import { ProductService } from "../services/productService";
+import { In } from "typeorm";
 
 const orderSelles = async (req: Request, res: Response) => {
     const orderSv = new OrderService();
@@ -64,6 +65,7 @@ const saveOrderBuy = async (req: Request, res: Response) => {
     try {
         const schema = Joi.object({
             partnerId: Joi.number().required(),
+            status: Joi.string().valid(...Object.values(StatusPaid)).optional(),
             orderDetails: Joi.array().min(1).items({
                 productId: Joi.number().required(),
                 unitPrice: Joi.number().required(),
@@ -83,21 +85,34 @@ const saveOrderBuy = async (req: Request, res: Response) => {
         if (!isValidParner) {
             return res.status(400).json('Business not found');
         }
-        const order = await orderSv.save({
+        const order = orderSv.create({
             partnerId: value.partnerId,
             userId: userId,
             typeOrder: TypeOrder.BUY,
+            status: value.status ?? StatusPaid.NOT_PAID,
         })
-        const orderdetail = value.orderDetails.map((product) => {
+        let totalAmount = 0;
+        const updateProductId = value.orderDetails.map((product) => product.productId);
+        const updateProduct = await psv.getAll({ where: { id: In(updateProductId) } });
+        if (updateProduct.length !== value.orderDetails.length) {
+            return res.status(400).json('Product not found')
+        }
+        updateProduct.forEach((updateProduct) => {
+            const productToUpdate = value.orderDetails.find((product) => product.productId === updateProduct.id);
+            updateProduct.quanlity += productToUpdate.quantity;
+        });
+        order.orderDetails = value.orderDetails.map((product) => {
+            totalAmount += (product.quantity * product.unitPrice);
             return detailOrderSv.create({
                 ...product,
                 price: product.quantity * product.unitPrice,
                 orderId: order.id,
             })
         })
-        order.orderDetails = await detailOrderSv.save(orderdetail);
-        // const productId = order.orderDetails.map((product) => product.)
-        return res.status(200).json(order);
+        const result = await orderSv.save({ ...order, totalAmount: totalAmount });
+
+        await psv.save(updateProduct);
+        return res.status(200).json(result);
     } catch (error) {
         console.log(error);
         return res.status(500).json(error);
@@ -110,9 +125,11 @@ const saveOrderSell = async (req: Request, res: Response) => {
     const orderSv = new OrderService();
     const detailOrderSv = new OrderDetailService();
     const bsv = new BusinessPartnerService();
+    const psv = new ProductService();
     try {
         const schema = Joi.object({
             partnerId: Joi.number().required(),
+            status: Joi.string().valid(...Object.values(StatusPaid)).optional(),
             orderDetails: Joi.array().min(1).items({
                 productId: Joi.number().required(),
                 unitPrice: Joi.number().required(),
@@ -132,20 +149,42 @@ const saveOrderSell = async (req: Request, res: Response) => {
         if (!isValidParner) {
             return res.status(400).json('Client not found');
         }
-        const order = await orderSv.save({
+        const order = orderSv.create({
             partnerId: value.partnerId,
             userId: userId,
             typeOrder: TypeOrder.SELL,
+            status: value.status ?? StatusPaid.NOT_PAID,
         })
-        const orderdetail = value.orderDetails.map((product) => {
+        let totalAmount = 0;
+        const updateProductId = value.orderDetails.map((product) => product.productId);
+        const updateProduct = await psv.getAll({ where: { id: In(updateProductId) } });
+        if (updateProduct.length !== value.orderDetails.length) {
+            return res.status(400).json('Product not found')
+        }
+        let enoughProduct = true;
+        updateProduct.forEach((updateProduct) => {
+            const productToUpdate = value.orderDetails.find((product) => product.productId === updateProduct.id);
+            if (updateProduct.quanlity < productToUpdate.quantity) {
+                enoughProduct = false;
+            }
+            updateProduct.quanlity -= productToUpdate.quantity;
+        });
+        if (!enoughProduct) {
+            return res.status(400).json(`Not enough quatity to sell`);
+
+        }
+        order.orderDetails = value.orderDetails.map((product) => {
+            totalAmount += (product.quantity * product.unitPrice);
             return detailOrderSv.create({
                 ...product,
-                price: product.quanlity * product.unitPrice,
+                price: product.quantity * product.unitPrice,
                 orderId: order.id,
             })
         })
-        order.orderDetails = await detailOrderSv.save(orderdetail)
-        return res.status(200).json(order);
+        const result = await orderSv.save({ ...order, totalAmount: totalAmount });
+
+        await psv.save(updateProduct);
+        return res.status(200).json(result);
     } catch (error) {
         console.log(error);
         return res.status(500).json(error);

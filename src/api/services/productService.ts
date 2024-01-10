@@ -9,7 +9,7 @@ export class ProductService {
         return this.productRes.create(data);
     }
 
-    async save(data: DeepPartial<Product>): Promise<Product> {
+    async save(data: DeepPartial<Product[]>): Promise<Product[]> {
         return await this.productRes.save(data);
     }
 

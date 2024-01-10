@@ -63,7 +63,7 @@ const saveProduct = async (req: Request, res: Response) => {
         if (notValid) {
             return res.status(400).json('name of product is exist (just check in category)');
         }
-        const data = await psv.save(value);
+        const data = await psv.save([value]);
         return res.status(200).json(data);
     } catch (error) {
         console.log(error);
